@@ -7,6 +7,8 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity {
 
     TextView textView;
+
+    private TDHelper tdHelper;
     public int newMessages = 0;
 
     @Override
@@ -16,16 +18,21 @@ public class MainActivity extends AppCompatActivity {
 
         textView = findViewById(R.id.textView);
 
-        try {
-            Example.main(null, this);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        tdHelper = TDHelper.getInstance(this);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        tdHelper.close();
+    }
 
     public static class phoneNumber {
         public static String value = null;
+    }
+
+    public void setText(String text) {
+        textView.setText(text);
     }
 
 }
