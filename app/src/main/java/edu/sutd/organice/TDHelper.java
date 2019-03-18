@@ -194,7 +194,6 @@ public class TDHelper {
             TdApi.FormattedText text = ((TdApi.MessageText) content).text;
             try {
                 ActionRequest request = ActionRequest.parseMessage(text.text);
-                Log.d(LOG_TAG, "see me?");
                 CalendarHelper calendarHelper = new CalendarHelper(context);
                 calendarHelper.execute(request);
             } catch (ParseException e) {
