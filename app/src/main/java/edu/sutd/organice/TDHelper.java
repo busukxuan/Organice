@@ -188,15 +188,20 @@ public class TDHelper {
     }
 
     private void onNewMessage(TdApi.UpdateNewMessage updateNewMessage) {
-        Log.i(LOG_TAG, "received new message");
+        Log.i(LOG_TAG, "received new message!!!");
         TdApi.MessageContent content = updateNewMessage.message.content;
         if (content instanceof TdApi.MessageText) {
             TdApi.FormattedText text = ((TdApi.MessageText) content).text;
             try {
-                context.setText(ActionRequest.parseMessage(text.text).toString());
-                Toast.makeText(context, ActionRequest.parseMessage(text.text).toString(), Toast.LENGTH_LONG).show();
+                ActionRequest request = ActionRequest.parseMessage(text.text);
+                Log.d(LOG_TAG, "see me?");
+//                context.textView.setText(request.toString());
+                CalendarHelper calendarHelper = new CalendarHelper(context);
+                calendarHelper.execute(request);
             } catch (ParseException e) {
-                throw new RuntimeException();
+                Log.e(LOG_TAG, "parse error");
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
