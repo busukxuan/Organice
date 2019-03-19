@@ -8,6 +8,8 @@ import java.util.Date;
 
 public abstract class ActionRequest {
 
+    private static final String LOG_TAG = "ActionRequest";
+
     public static ActionRequest parseMessage(String message) throws ParseException {
         Log.d("MyParser", "Called parser.");
         String title = null;
@@ -55,6 +57,18 @@ public abstract class ActionRequest {
         NewEventRequest r = new NewEventRequest(title, ds, de, venue, note);
         Log.d("MyParser", r.toString());
         return r;
+    }
+
+    public static void execute(CalendarHelper calendarHelper, ActionRequest request) {
+        if (request instanceof NewEventRequest) {
+            calendarHelper.addEvent((NewEventRequest) request);
+        } else {
+            Log.wtf(LOG_TAG, "unexpected request type: " + request.getClass().toString());
+        }
+    }
+
+    public static void execute(CalendarHelper calendarHelper, String message) throws ParseException {
+        execute(calendarHelper, parseMessage(message));
     }
 
     public static void main(String[] args) throws ParseException {

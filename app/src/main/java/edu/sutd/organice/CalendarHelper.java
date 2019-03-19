@@ -19,7 +19,10 @@ public class CalendarHelper {
 
     CalendarHelper(Context c) {
         context = c;
+        initializeCalendarID();
+    }
 
+    private void initializeCalendarID() {
         // get calendar ID
         Log.d(LOG_TAG, "getting calendar ID");
         Cursor cur;
@@ -58,15 +61,7 @@ public class CalendarHelper {
         cur.close();
     }
 
-    public void execute(ActionRequest request) {
-        if (request instanceof NewEventRequest) {
-            addEvent((NewEventRequest) request);
-        } else {
-            Log.wtf(LOG_TAG, "unexpected request type: " + request.getClass().toString());
-        }
-    }
-
-    private void addEvent(NewEventRequest request) {
+    public void addEvent(NewEventRequest request) {
         Log.d(LOG_TAG, "adding new event");
         ContentResolver cr = context.getContentResolver();
 

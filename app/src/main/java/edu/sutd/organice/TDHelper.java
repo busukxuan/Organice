@@ -192,10 +192,9 @@ public class TDHelper {
         TdApi.MessageContent content = updateNewMessage.message.content;
         if (content instanceof TdApi.MessageText) {
             TdApi.FormattedText text = ((TdApi.MessageText) content).text;
+            CalendarHelper calendarHelper = new CalendarHelper(context);
             try {
-                ActionRequest request = ActionRequest.parseMessage(text.text);
-                CalendarHelper calendarHelper = new CalendarHelper(context);
-                calendarHelper.execute(request);
+                ActionRequest.execute(calendarHelper, text.text);
             } catch (ParseException e) {
                 Log.e(LOG_TAG, "parse error");
             } catch (Exception e) {
