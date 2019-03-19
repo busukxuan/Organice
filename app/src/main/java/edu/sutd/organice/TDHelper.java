@@ -159,13 +159,13 @@ public class TDHelper {
                 break;
             case TdApi.AuthorizationStateLoggingOut.CONSTRUCTOR:
                 // logged out
-                haveAuthorization = false;
                 Log.i(LOG_TAG, "logging out");
+                haveAuthorization = false;
                 break;
             case TdApi.AuthorizationStateClosing.CONSTRUCTOR:
                 // closing database
-                haveAuthorization = false;
                 Log.d(LOG_TAG, "closing database");
+                haveAuthorization = false;
                 break;
             case TdApi.AuthorizationStateClosed.CONSTRUCTOR:
                 // database closed
@@ -206,7 +206,7 @@ public class TDHelper {
     }
 
     public void close() {
-        client.send(new TdApi.Close(), new AuthorizationRequestHandler());
+        client.close();
     }
 
 }
