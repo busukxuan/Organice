@@ -3,12 +3,14 @@ package edu.sutd.organice;
 import java.util.Date;
 
 public class NewEventRequest extends ActionRequest {
+    private long chatId;
     private String title;
     private Date dateStart, dateEnd;
     private String venue;
     private String note;
 
-    NewEventRequest(String title, Date dateStart, Date dateEnd, String venue, String note) {
+    NewEventRequest(long chatId, String title, Date dateStart, Date dateEnd, String venue, String note) {
+        this.chatId = chatId;
         this.title = title;
         this.dateStart = dateStart;
         if (dateEnd != null) {
@@ -20,6 +22,10 @@ public class NewEventRequest extends ActionRequest {
         if (note != null) {
             this.note = note;
         }
+    }
+
+    public long getChatId() {
+        return chatId;
     }
 
     public String getTitle() {
@@ -44,6 +50,18 @@ public class NewEventRequest extends ActionRequest {
 
     @Override
     public String toString() {
-        return "NewEventRequest(\"" + title + "\", " + dateStart.toString() + ", " + dateEnd.toString() + ", \"" + venue + "\", \"" + note + "\")";
+        return "NewEventRequest(" +
+                Long.toString(chatId) +
+                ", " +
+                title +
+                "\", " +
+                dateStart.toString() +
+                ", " +
+                dateEnd.toString() +
+                ", \"" +
+                venue +
+                "\", \"" +
+                note +
+                "\")";
     }
 }
