@@ -1,5 +1,6 @@
 package edu.sutd.organice;
 
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
@@ -18,11 +19,10 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class TDHelper {
     private static final String LOG_TAG = "TDHelper";
-    private static final Class phoneNumberActivityClass = PhoneNumberActivity.class;
-    private static final Class loginCodeActivityClass = LoginCodeActivity.class;
 
-    private final MainActivity context;
+    private final Context context;
     private final Handler uiHandler;
+    private final CalendarHelper calendarHelper;
     private Client client;
     private final Client.ResultHandler defaultHandler = new TDHelper.DefaultHandler();
     // authorization variables
@@ -42,9 +42,10 @@ public class TDHelper {
         System.loadLibrary("tdjni");
     }
 
-    public TDHelper(MainActivity context, Handler handler) {
+    public TDHelper(Context context, Handler handler) {
         this.context = context;
         this.uiHandler = handler;
+        this.calendarHelper = new CalendarHelper(context);
 
         // create client
         client = Client.create(new TDHelper.UpdatesHandler(), null, null);
@@ -180,7 +181,6 @@ public class TDHelper {
         TdApi.MessageContent content = updateNewMessage.message.content;
         if (content instanceof TdApi.MessageText) {
             TdApi.FormattedText text = ((TdApi.MessageText) content).text;
-            CalendarHelper calendarHelper = new CalendarHelper(context);
             try {
                 ActionRequest.execute(calendarHelper, text.text);
             } catch (ParseException e) {
