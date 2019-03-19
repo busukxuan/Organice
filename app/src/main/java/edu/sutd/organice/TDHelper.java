@@ -1,8 +1,9 @@
 package edu.sutd.organice;
 
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -16,13 +17,12 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class TDHelper {
-    private static TDHelper instance;
-
     private static final String LOG_TAG = "TDHelper";
     private static final Class phoneNumberActivityClass = PhoneNumberActivity.class;
     private static final Class loginCodeActivityClass = LoginCodeActivity.class;
 
     private final MainActivity context;
+    private final Handler uiHandler;
     private Client client;
     private final Client.ResultHandler defaultHandler = new TDHelper.DefaultHandler();
     // authorization variables
@@ -42,28 +42,12 @@ public class TDHelper {
         System.loadLibrary("tdjni");
     }
 
-    private TDHelper(MainActivity context) {
+    public TDHelper(MainActivity context, Handler handler) {
         this.context = context;
+        this.uiHandler = handler;
 
         // create client
         client = Client.create(new TDHelper.UpdatesHandler(), null, null);
-    }
-
-    public static TDHelper getInstance(MainActivity mainActivity) {
-        if (instance == null) {
-            instance = new TDHelper(mainActivity);
-            return instance;
-        } else {
-            throw new IllegalStateException("another instance already exists");
-        }
-    }
-
-    public static TDHelper getInstance() {
-        if (instance != null) {
-            return instance;
-        } else {
-            throw new IllegalStateException("instance does not exist; use getInstance(MainActivity) to create instance");
-        }
     }
 
     private class DefaultHandler implements Client.ResultHandler {
@@ -140,14 +124,18 @@ public class TDHelper {
                 break;
             case TdApi.AuthorizationStateWaitPhoneNumber.CONSTRUCTOR: {
                 // send phone number
-                Intent phoneNumberActivityIntent = new Intent(context, phoneNumberActivityClass);
-                context.startActivity(phoneNumberActivityIntent);
+                Log.d(LOG_TAG, "prompting UI thread for phone number");
+                Message message = new Message();
+                message.arg1 = MainActivity.PHONE_NUMBER_REQUEST_CODE;
+                uiHandler.sendMessage(message);
                 break;
             }
             case TdApi.AuthorizationStateWaitCode.CONSTRUCTOR: {
                 // send login code
-                Intent loginCodeActivityIntent = new Intent(context, loginCodeActivityClass);
-                context.startActivity(loginCodeActivityIntent);
+                Log.d(LOG_TAG, "prompting UI thread for login code");
+                Message message = new Message();
+                message.arg1 = MainActivity.LOGIN_CODE_REQUEST_CODE;
+                uiHandler.sendMessage(message);
                 break;
             }
             case TdApi.AuthorizationStateWaitPassword.CONSTRUCTOR: {
@@ -205,12 +193,12 @@ public class TDHelper {
 
     public void sendPhoneNumber(String phoneNumber) {
         client.send(new TdApi.SetAuthenticationPhoneNumber(phoneNumber, false, false), new AuthorizationRequestHandler());
-        Log.i(LOG_TAG, "sent phone number");
+        Log.i(LOG_TAG, "sent phone number: " + phoneNumber);
     }
 
     public void sendLoginCode(String code) {
         client.send(new TdApi.CheckAuthenticationCode(code, "", ""), new AuthorizationRequestHandler());
-        Log.i(LOG_TAG, "sent login code");
+        Log.i(LOG_TAG, "sent login code: " + code);
     }
 
     public void logout() {

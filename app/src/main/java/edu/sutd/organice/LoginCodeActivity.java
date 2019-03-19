@@ -1,5 +1,6 @@
 package edu.sutd.organice;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -25,7 +26,9 @@ public class LoginCodeActivity extends AppCompatActivity {
         loginCodeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TDHelper.getInstance().sendLoginCode(loginCodeEditText.getText().toString());
+                Intent intent = new Intent();
+                intent.putExtra("loginCode", loginCodeEditText.getText().toString());
+                setResult(0, intent);
                 finish();
             }
         });
