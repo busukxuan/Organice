@@ -86,12 +86,4 @@ public class MainActivity extends AppCompatActivity {
         tdHelper.close();
     }
 
-    public static class phoneNumber {
-        public static String value = null;
-    }
-
-    public void setText(String text) {
-        textView.setText(text);
-    }
-
 }
