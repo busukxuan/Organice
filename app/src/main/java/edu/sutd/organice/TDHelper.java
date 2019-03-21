@@ -180,9 +180,8 @@ public class TDHelper {
         Log.i(LOG_TAG, "received new message");
         TdApi.MessageContent content = updateNewMessage.message.content;
         if (content instanceof TdApi.MessageText) {
-            TdApi.FormattedText text = ((TdApi.MessageText) content).text;
             try {
-                ActionRequest.execute(calendarHelper, updateNewMessage.message.chatId, text.text);
+                ActionRequest.execute(calendarHelper, updateNewMessage.message);
             } catch (ParseException e) {
                 Log.e(LOG_TAG, "parse error");
             } catch (Exception e) {

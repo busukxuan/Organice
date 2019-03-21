@@ -68,11 +68,11 @@ public class CalendarHelper {
         // create event value
         ContentValues values = new ContentValues();
         values.put(CalendarContract.Events.CALENDAR_ID, calendarID);
-        values.put(CalendarContract.Events.TITLE, request.getTitle());
-        values.put(CalendarContract.Events.DTSTART, request.getDateStart().getTime());
-        values.put(CalendarContract.Events.DTEND, request.getDateEnd().getTime());
-        values.put(CalendarContract.Events.EVENT_LOCATION, request.getVenue());
-        values.put(CalendarContract.Events.DESCRIPTION, request.getNote());
+        values.put(CalendarContract.Events.TITLE, request.eventData.title);
+        values.put(CalendarContract.Events.DTSTART, request.eventData.dateStart.getTime());
+        values.put(CalendarContract.Events.DTEND, request.eventData.dateEnd.getTime());
+        values.put(CalendarContract.Events.EVENT_LOCATION, request.eventData.venue);
+        values.put(CalendarContract.Events.DESCRIPTION, request.eventData.note);
         values.put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().getID());
 
         try {
