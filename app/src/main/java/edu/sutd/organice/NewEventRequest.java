@@ -1,67 +1,18 @@
 package edu.sutd.organice;
 
-import java.util.Date;
-
 public class NewEventRequest extends ActionRequest {
-    private long chatId;
-    private String title;
-    private Date dateStart, dateEnd;
-    private String venue;
-    private String note;
+    final long chatId;
+    final EventData eventData;
 
-    NewEventRequest(long chatId, String title, Date dateStart, Date dateEnd, String venue, String note) {
+    NewEventRequest(long chatId, EventData eventData) {
         this.chatId = chatId;
-        this.title = title;
-        this.dateStart = dateStart;
-        if (dateEnd != null) {
-            this.dateEnd = dateEnd;
-        }
-        if (venue != null) {
-            this.venue = venue;
-        }
-        if (note != null) {
-            this.note = note;
-        }
-    }
-
-    public long getChatId() {
-        return chatId;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public Date getDateStart() {
-        return dateStart;
-    }
-
-    public Date getDateEnd() {
-        return dateEnd;
-    }
-
-    public String getVenue() {
-        return venue;
-    }
-
-    public String getNote() {
-        return note;
+        this.eventData = eventData;
     }
 
     @Override
     public String toString() {
         return "NewEventRequest(" +
-                Long.toString(chatId) +
-                ", " +
-                title +
-                "\", " +
-                dateStart.toString() +
-                ", " +
-                dateEnd.toString() +
-                ", \"" +
-                venue +
-                "\", \"" +
-                note +
+                eventData.toString() +
                 "\")";
     }
 }

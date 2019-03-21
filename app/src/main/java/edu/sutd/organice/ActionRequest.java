@@ -2,6 +2,8 @@ package edu.sutd.organice;
 
 import android.util.Log;
 
+import org.drinkless.td.libcore.telegram.TdApi;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -10,7 +12,8 @@ public abstract class ActionRequest {
 
     private static final String LOG_TAG = "ActionRequest";
 
-    public static ActionRequest parseMessage(long chatId, String message) throws ParseException {
+    public static ActionRequest parseMessage(TdApi.Message message) throws ParseException {
+        String text = ((TdApi.MessageText) message.content).text.text;
         Log.d("MyParser", "Called parser.");
         String title = null;
         Date ds = null;// date start
@@ -18,7 +21,7 @@ public abstract class ActionRequest {
         String venue = null;
         String note = null;
 
-        String[] lines = message.split("\n");
+        String[] lines = text.split("\n");
         Log.d("MyParser", "n_ines: " + Integer.toString(lines.length));
         int lineIndex = 0;
         for (;lineIndex < lines.length && !lines[lineIndex].equals("# organice new"); lineIndex++) {
@@ -54,9 +57,9 @@ public abstract class ActionRequest {
         }
         Log.d("MyParser", "Completed loop.");
 
-        NewEventRequest r = new NewEventRequest(chatId, title, ds, de, venue, note);
-        Log.d("MyParser", r.toString());
-        return r;
+        EventData eventData = new EventData(title, ds, de, venue, note);
+        Log.d("MyParser", eventData.toString());
+        return new NewEventRequest(message.chatId, eventData);
     }
 
     public static void execute(CalendarHelper calendarHelper, ActionRequest request) {
@@ -67,8 +70,7 @@ public abstract class ActionRequest {
         }
     }
 
-    public static void execute(CalendarHelper calendarHelper, long chatId, String message) throws ParseException {
-        execute(calendarHelper, parseMessage(chatId, message));
+    public static void execute(CalendarHelper calendarHelper, TdApi.Message message) throws ParseException {
+        execute(calendarHelper, parseMessage(message));
     }
-
 }
