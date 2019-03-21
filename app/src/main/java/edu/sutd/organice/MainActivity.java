@@ -1,9 +1,13 @@
 package edu.sutd.organice;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -44,6 +48,9 @@ public class MainActivity extends AppCompatActivity {
     public static final int PHONE_NUMBER_REQUEST_CODE = 0;
     public static final int LOGIN_CODE_REQUEST_CODE = 1;
 
+    private static final int CALENDAR_READ_PERMISSION_REQUEST_CODE = 0;
+    private static final int CALENDAR_WRITE_PERMISSION_REQUEST_CODE = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +68,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         tdHelper = new TDHelper(this, tdHandler);
+
+        getCalendarPermissions();
     }
 
     @Override
@@ -86,4 +95,38 @@ public class MainActivity extends AppCompatActivity {
         tdHelper.close();
     }
 
+    private void getCalendarPermissions() {
+        Log.d(LOG_TAG, "checking for calendar permissions");
+        if (
+                ContextCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.READ_CALENDAR
+                ) != PackageManager.PERMISSION_GRANTED ||
+                        ContextCompat.checkSelfPermission(
+                                this,
+                                Manifest.permission.WRITE_CALENDAR
+                        ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // calendar permissions not granted
+            Log.d(LOG_TAG, "requesting calendar permissions");
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[]{Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR},
+                    CALENDAR_READ_PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResult) {
+        Log.d(LOG_TAG, "received permission request response");
+        switch (requestCode) {
+            case CALENDAR_READ_PERMISSION_REQUEST_CODE:
+                if (
+                        grantResult[0] != PackageManager.PERMISSION_GRANTED ||
+                                grantResult[1] != PackageManager.PERMISSION_GRANTED
+                ) {
+                    // do nothing for now
+                }
+                break;
+        }
+    }
 }
