@@ -34,4 +34,5 @@ public class LoginCodeActivity extends AppCompatActivity {
         });
         Log.i(LOG_TAG, "waiting for user to enter login code");
     }
+
 }

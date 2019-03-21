@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Organice</string>
+    <string name="login_code">Login code:</string>
+    <string name="login">Login</string>
 </resources>
