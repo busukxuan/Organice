@@ -15,7 +15,7 @@ public class DeleteEventRequest extends ActionRequest {
     }
 
     @Override
-    public void execute(CalendarHelper calendarHelper) {
+    public void execute(CalendarHelper calendarHelper, TDHelper tdHelper) {
         calendarHelper.deleteEvent(this);
     }
 

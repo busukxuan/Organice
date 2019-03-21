@@ -46,7 +46,7 @@ public class NewEventRequest extends ActionRequest {
     }
 
     @Override
-    public void execute(CalendarHelper calendarHelper) {
+    public void execute(CalendarHelper calendarHelper, TDHelper tdHelper) {
         calendarHelper.addEvent(this);
     }
 

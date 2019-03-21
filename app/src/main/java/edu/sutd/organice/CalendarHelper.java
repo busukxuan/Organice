@@ -9,6 +9,8 @@ import android.provider.CalendarContract;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -29,11 +31,11 @@ public class CalendarHelper {
             CalendarContract.Events.DESCRIPTION
     };
     private static final int PROJECTION_EVENT_ID_INDEX = 0;
-    private static final int PROJECTION_EVENT_TITLE_INDEX = 0;
-    private static final int PROJECTION_EVENT_DTSTART_INDEX = 0;
-    private static final int PROJECTION_EVENT_DTEND_INDEX = 0;
-    private static final int PROJECTION_EVENT_LOCATION_INDEX = 0;
-    private static final int PROJECTION_EVENT_DESCRIPTION_INDEX = 0;
+    private static final int PROJECTION_EVENT_TITLE_INDEX = 1;
+    private static final int PROJECTION_EVENT_DTSTART_INDEX = 2;
+    private static final int PROJECTION_EVENT_DTEND_INDEX = 3;
+    private static final int PROJECTION_EVENT_LOCATION_INDEX = 4;
+    private static final int PROJECTION_EVENT_DESCRIPTION_INDEX = 5;
 
     CalendarHelper(Context c) {
         context = c;
@@ -169,5 +171,38 @@ public class CalendarHelper {
                 // multiple matching events, don't delete
                 Log.i(LOG_TAG, "multiple events match delete request, deletion aborted");
         }
+    }
+
+    public EventData[] getNextEvents() {
+        ContentResolver cr = context.getContentResolver();
+
+        Uri uri = CalendarContract.Events.CONTENT_URI;
+
+        String selection = "((" + CalendarContract.Events.DTEND + " > ?))";
+        String[] selectionArgs = new String[] { Long.toString(Calendar.getInstance().getTime().getTime()) };
+
+        // get number of matching events
+        Cursor cur = cr.query(
+                uri,
+                EVENT_PROJECTION,
+                selection,
+                selectionArgs,
+                CalendarContract.Events.DTSTART + " ASC"
+        );
+
+        cur.moveToNext();
+
+        EventData[] eventData = new EventData[5];
+
+        for (int i = 0; i < 5; i++) {
+            String title = cur.getString(PROJECTION_EVENT_TITLE_INDEX);
+            Date start = new Date(cur.getLong(PROJECTION_EVENT_DTSTART_INDEX));
+            Date end = new Date(cur.getLong(PROJECTION_EVENT_DTEND_INDEX));
+            String venue = cur.getString(PROJECTION_EVENT_LOCATION_INDEX);
+            eventData[i] = new EventData(title, start, end, venue, null);
+            cur.moveToNext();
+        }
+
+        return eventData;
     }
 }

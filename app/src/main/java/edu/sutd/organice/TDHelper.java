@@ -54,6 +54,7 @@ public class TDHelper {
     private class DefaultHandler implements Client.ResultHandler {
         @Override
         public void onResult(TdApi.Object object) {
+            Log.d(LOG_TAG, "TDLib client result: " + object.toString());
         }
     }
 
@@ -181,7 +182,7 @@ public class TDHelper {
         TdApi.MessageContent content = updateNewMessage.message.content;
         if (content instanceof TdApi.MessageText) {
             try {
-                ActionRequest.execute(calendarHelper, updateNewMessage.message);
+                ActionRequest.execute(calendarHelper, this, updateNewMessage.message);
             } catch (ParseException e) {
                 Log.e(LOG_TAG, "parse error");
             } catch (Exception e) {
@@ -206,6 +207,12 @@ public class TDHelper {
 
     public void close() {
         client.close();
+    }
+
+    public void sendMessage(long chatId, String s) {
+        TdApi.FormattedText text = new TdApi.FormattedText(s, null);
+        TdApi.InputMessageContent content = new TdApi.InputMessageText(text, false, false);
+        client.send(new TdApi.SendMessage(chatId, 0, false, false, null, content), defaultHandler);
     }
 
 }

@@ -80,13 +80,16 @@ public abstract class ActionRequest {
         return new EventData(title, start, end, venue, note);
     }
 
-    public abstract void execute(CalendarHelper calendarHelper);
+    public abstract void execute(CalendarHelper calendarHelper, TDHelper tdHelper);
 
-    public static void execute(CalendarHelper calendarHelper, ActionRequest request) {
-        request.execute(calendarHelper);
+    public static void execute(CalendarHelper calendarHelper, TDHelper tdHelper, ActionRequest request) {
+        request.execute(calendarHelper, tdHelper);
     }
 
-    public static void execute(CalendarHelper calendarHelper, TdApi.Message message) throws ParseException {
-        execute(calendarHelper, parseMessage(message));
+    public static void execute(CalendarHelper calendarHelper, TDHelper tdHelper, TdApi.Message message) throws ParseException {
+        ActionRequest request = parseMessage(message);
+        if (request != null) {
+            execute(calendarHelper, tdHelper, request);
+        }
     }
 }

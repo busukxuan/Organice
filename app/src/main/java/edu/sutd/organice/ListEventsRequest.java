@@ -9,8 +9,13 @@ public class ListEventsRequest extends ActionRequest {
     }
 
     @Override
-    public void execute(CalendarHelper calendarHelper) {
-        // do nothing for now
+    public void execute(CalendarHelper calendarHelper, TDHelper tdHelper) {
+        EventData[] eventData = calendarHelper.getNextEvents();
+        String[] eventLines = new String[5];
+        for (int i = 0; i < 5; i++) {
+            eventLines[i] = Integer.toString(i+1) + ". " + eventData[i].toTextLine();
+        }
+        tdHelper.sendMessage(chatId, String.join("\n", eventLines));
     }
 
     @Override
