@@ -37,8 +37,6 @@ public class EventContract {
 
         public static String SQL_DROP_TABLE = "DROP TABLE IF EXISTS " + EventEntry.TABLE_NAME;
 
-
-
         public static String SQL_QUERY_ALL_ROWS = "SELECT * FROM " + EventEntry.TABLE_NAME;
 
     }

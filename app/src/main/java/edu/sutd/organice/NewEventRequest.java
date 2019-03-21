@@ -1,5 +1,7 @@
 package edu.sutd.organice;
 
+import java.util.Date;
+
 public class NewEventRequest extends ActionRequest {
     final long chatId;
     final EventData eventData;
@@ -25,4 +27,31 @@ public class NewEventRequest extends ActionRequest {
                 eventData.toString() +
                 "\")";
     }
+
+
+
+    public long getChatID() {
+        return chatId;
+    }
+
+    public String getTitle() {
+        return eventData.title;
+    }
+
+    public Date getDateStart() {
+        return eventData.dateStart;
+    }
+
+    public Date getDateEnd() {
+        return eventData.dateEnd;
+    }
+
+    public String getVenue() {
+        return eventData.venue;
+    }
+
+    public String getNote() {
+        return eventData.note;
+    }
+
 }
