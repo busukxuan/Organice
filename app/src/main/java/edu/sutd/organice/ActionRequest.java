@@ -13,8 +13,8 @@ public abstract class ActionRequest {
     public static ActionRequest parseMessage(long chatId, String message) throws ParseException {
         Log.d("MyParser", "Called parser.");
         String title = null;
-        Date ds = null;
-        Date de = null;
+        Date ds = null;// date start
+        Date de = null;// date end
         String venue = null;
         String note = null;
 
