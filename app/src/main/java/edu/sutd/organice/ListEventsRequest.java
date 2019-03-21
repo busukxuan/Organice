@@ -1,9 +1,9 @@
 package edu.sutd.organice;
 
-public class ListEventRequest extends ActionRequest{
+public class ListEventsRequest extends ActionRequest {
     public final long chatId;
 
-    ListEventRequest(Long chatID){
+    ListEventsRequest(Long chatID) {
         this.chatId = chatID;
     }
 
