@@ -21,15 +21,6 @@ public class NewEventRequest extends ActionRequest {
         }
     }
 
-    @Override
-    public String toString() {
-        return "NewEventRequest(" +
-                eventData.toString() +
-                "\")";
-    }
-
-
-
     public long getChatID() {
         return chatId;
     }
@@ -52,6 +43,18 @@ public class NewEventRequest extends ActionRequest {
 
     public String getNote() {
         return eventData.note;
+    }
+
+    @Override
+    public void execute(CalendarHelper calendarHelper) {
+        calendarHelper.addEvent(this);
+    }
+
+    @Override
+    public String toString() {
+        return "NewEventRequest(" +
+                eventData.toString() +
+                ")";
     }
 
 }

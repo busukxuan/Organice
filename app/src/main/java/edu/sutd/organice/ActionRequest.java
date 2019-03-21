@@ -80,16 +80,10 @@ public abstract class ActionRequest {
         return new EventData(title, start, end, venue, note);
     }
 
+    public abstract void execute(CalendarHelper calendarHelper);
+
     public static void execute(CalendarHelper calendarHelper, ActionRequest request) {
-        if (request instanceof NewEventRequest) {
-            calendarHelper.addEvent((NewEventRequest) request);
-        } else if (request instanceof DeleteEventRequest) {
-            calendarHelper.deleteEvent((DeleteEventRequest) request);
-        } else if (request instanceof ListEventsRequest) {
-            // do nothing for now
-        } else {
-            Log.wtf(LOG_TAG, "unexpected request type: " + request.getClass().toString());
-        }
+        request.execute(calendarHelper);
     }
 
     public static void execute(CalendarHelper calendarHelper, TdApi.Message message) throws ParseException {
