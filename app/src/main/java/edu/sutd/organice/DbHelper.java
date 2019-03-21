@@ -2,17 +2,11 @@ package edu.sutd.organice;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.res.Resources;
-import android.database.ContentObservable;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
 
-import java.text.Format;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -180,7 +174,7 @@ public class DbHelper extends SQLiteOpenHelper {
         }
         
         String WHERE_CLAUSE = EventContract.EventEntry.COL_CHATID + " = ?";
-        String[] WHERE_ARGS = {title};
+        String[] WHERE_ARGS = new String[]{"title"};
 
         int rowsDeleted = writeableDb.delete(EventContract.EventEntry.TABLE_NAME, WHERE_CLAUSE, WHERE_ARGS);
         Log.i("Logcat", "rows deleted: " + rowsDeleted);
