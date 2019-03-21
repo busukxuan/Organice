@@ -10,7 +10,7 @@ public abstract class ActionRequest {
 
     private static final String LOG_TAG = "ActionRequest";
 
-    public static ActionRequest parseMessage(String message) throws ParseException {
+    public static ActionRequest parseMessage(long chatId, String message) throws ParseException {
         Log.d("MyParser", "Called parser.");
         String title = null;
         Date ds = null;
@@ -54,7 +54,7 @@ public abstract class ActionRequest {
         }
         Log.d("MyParser", "Completed loop.");
 
-        NewEventRequest r = new NewEventRequest(title, ds, de, venue, note);
+        NewEventRequest r = new NewEventRequest(chatId, title, ds, de, venue, note);
         Log.d("MyParser", r.toString());
         return r;
     }
@@ -67,11 +67,8 @@ public abstract class ActionRequest {
         }
     }
 
-    public static void execute(CalendarHelper calendarHelper, String message) throws ParseException {
-        execute(calendarHelper, parseMessage(message));
+    public static void execute(CalendarHelper calendarHelper, long chatId, String message) throws ParseException {
+        execute(calendarHelper, parseMessage(chatId, message));
     }
 
-    public static void main(String[] args) throws ParseException {
-        System.out.println(parseMessage("bla #organice new Title:Meeting Start:27/02/2019 End:28/02/2019 Venue:ISH Note:meet #end organice bye").toString());
-    }
 }

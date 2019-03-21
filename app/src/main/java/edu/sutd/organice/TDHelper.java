@@ -182,7 +182,7 @@ public class TDHelper {
         if (content instanceof TdApi.MessageText) {
             TdApi.FormattedText text = ((TdApi.MessageText) content).text;
             try {
-                ActionRequest.execute(calendarHelper, text.text);
+                ActionRequest.execute(calendarHelper, updateNewMessage.message.chatId, text.text);
             } catch (ParseException e) {
                 Log.e(LOG_TAG, "parse error");
             } catch (Exception e) {
