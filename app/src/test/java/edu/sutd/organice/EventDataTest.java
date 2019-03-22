@@ -20,13 +20,15 @@ public class EventDataTest {
     private int[] end;
     private String venue;
     private String note;
+    private static Class expectedException;
 
-    public EventDataTest(String title, int[] start, int[] end, String venue, String note) {
+    public EventDataTest(String title, int[] start, int[] end, String venue, String note, Class exception) {
         this.title = title;
         this.start = start;
         this.end = end;
         this.venue = venue;
         this.note = note;
+        this.expectedException = exception;
     }
 
     private static Date makeDate(int year, int month, int day) {
@@ -44,7 +46,8 @@ public class EventDataTest {
                         new int[] {1997, 1, 7},
                         new int[] {1999, 12, 31},
                         null,
-                        "this one has no venue!!!"
+                        "this one has no venue!!!",
+                        null
                 },
 
                 new Object[] {
@@ -52,7 +55,8 @@ public class EventDataTest {
                         new int[] {1997, 0, 7},
                         new int[] {1990, 2, 31},
                         "a random place\n_!#*+?/",
-                        "event is past-due; wrong dateEnd; dateEnd is before dateStart"
+                        "event is past-due; wrong dateEnd; dateEnd is before dateStart",
+                        null
                 },
 
                 new Object[] {
@@ -60,7 +64,8 @@ public class EventDataTest {
                         new int[] {1997, 1, 7},
                         new int[] {1999, 12, 31},
                         "a mysterious place",
-                        "this event has no title"
+                        "this event has no title",
+                        null
                 },
 
                 new Object[] {
@@ -68,7 +73,8 @@ public class EventDataTest {
                         new int[] {1997, 1, 7},
                         null,
                         null,
-                        "missing one Date | something happens somewhere at this time"
+                        "missing one Date",
+                        NullPointerException.class
                 },
 
                 new Object[] {
@@ -76,14 +82,15 @@ public class EventDataTest {
                         new int[] {1997, 1},
                         new int[] {1999, 12, 31},
                         "venue",
-                        ""
+                        "",
+                        ArrayIndexOutOfBoundsException.class
                 },
 
 
         };
         return Arrays.asList(parameters);
     }
-
+/*
     @Test
     public void parseMessage() {
         try {
@@ -99,27 +106,27 @@ public class EventDataTest {
         catch (ArrayIndexOutOfBoundsException e2) {
             fail("missing input(s) for Date");
         }
+        
 
-    }
+    }*/
 
     @Test
     public void toTextLine() {
-
         try {
             EventData e1 = new EventData (title, makeDate(start[0], start[1], start[2]), makeDate(end[0], end[1], end[2]), venue, note);
             EventData e2 = new EventData(title, makeDate(start[0], start[1], start[2]), makeDate(end[0], end[1], end[2]), venue, note);
             String s1 = e1.toTextLine();
             String s2 = e2.toTextLine();
             assertEquals(s1,s2);
+            if(expectedException != null){
+                fail("expected exception " + expectedException.toString());
+            }
         }
 
-        catch(NullPointerException e){
-            fail("Date cannot be empty (shown also in parseMessageTest)");
+        catch(Exception exception){
+            assertEquals(expectedException, exception.getClass());
         }
 
-        catch (ArrayIndexOutOfBoundsException e2) {
-            fail("missing input(s) for Date");
-        }
 
     }
 
