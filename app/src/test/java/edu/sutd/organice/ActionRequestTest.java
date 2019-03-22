@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 @RunWith(Parameterized.class)
 public class ActionRequestTest {
@@ -19,11 +20,13 @@ public class ActionRequestTest {
     private long chatId;
     private TdApi.Message message;
     private ActionRequest expectedRequest;
+    private Class expectedException;
 
-    public ActionRequestTest(long chatId, String message, ActionRequest expectedRequest) {
+    public ActionRequestTest(long chatId, String message, ActionRequest expectedRequest, Class exception) {
         this.chatId = chatId;
         this.message = makeTextMessage(message, chatId);
         this.expectedRequest = expectedRequest;
+        this.expectedException = exception;
     }
 
     public TdApi.Message makeTextMessage(String s, long chatId) {
@@ -65,8 +68,8 @@ public class ActionRequestTest {
                                             null,
                                             "this one has no venue!!!"
                                     )
-                            )
-
+                            ),
+                            null
                 },
                 new Object[]{
                         123,
@@ -87,7 +90,8 @@ public class ActionRequestTest {
                                         null,
                                         "no #end statement"
                                 )
-                        )
+                        ),
+                        null
                 },
                 new Object[]{
                         69,
@@ -108,7 +112,8 @@ public class ActionRequestTest {
                                                 null,
                                                 "no title"
                                         )
-                                )
+                                ),
+                        null
                 },
                 new Object[] {
                         12345,
@@ -127,7 +132,8 @@ public class ActionRequestTest {
                                         null,
                                         "purely the creation of new event"
                                 )
-                        )
+                        ),
+                        null
 
                 },
                 new Object[] {
@@ -150,7 +156,8 @@ public class ActionRequestTest {
                                         null,
                                         "this one has no venue!!!"
                                 )
-                        )
+                        ),
+                        null
 
                 },
                 new Object[] {
@@ -172,21 +179,22 @@ public class ActionRequestTest {
                                         null,
                                         "this one has no venue!!!"
                                 )
-                        )
+                        ),
+                        null
 
                 },
                 new Object[] {
                         12345,
                         "# organice list\n",    //test function list
                         new ListEventsRequest(
-                                (long) 12345)
-
+                                (long) 12345),
+                        null
                 },
                 new Object[] {
                         12345,
                         "# organice test\n",    //test for non-existing function
+                        null,
                         null
-
                 },
         };
         return Arrays.asList(parameters);
@@ -194,7 +202,14 @@ public class ActionRequestTest {
 
     @Test
     public void parseMessage() throws ParseException {
-        ActionRequest request = ActionRequest.parseMessage(message);
-        assertEquals(request,expectedRequest);
+        try {
+            ActionRequest request = ActionRequest.parseMessage(message);
+            assertEquals(request, expectedRequest);
+            if (expectedException != null) {
+                fail("expected exception " + expectedException.toString());
+            }
+        } catch (Exception e) {
+            assertEquals(e.getClass(), expectedException);
+        }
     }
 }
