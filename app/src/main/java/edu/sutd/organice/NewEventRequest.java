@@ -8,17 +8,7 @@ public class NewEventRequest extends ActionRequest {
 
     NewEventRequest(long chatId, EventData eventData) {
         this.chatId = chatId;
-
-        // check eventData fields for validity before setting eventData
-        if (eventData.title == null) {
-            throw new IllegalArgumentException("eventData.title for new event must not be null");
-        } else if (eventData.dateStart == null) {
-            throw new IllegalArgumentException("eventData.dateStart for new event must not be null");
-        } else if (eventData.dateEnd == null) {
-            throw new IllegalArgumentException("eventData.dateStart for new event must not be null");
-        } else {
-            this.eventData = eventData;
-        }
+        this.eventData = eventData;
     }
 
     public long getChatID() {
@@ -46,8 +36,17 @@ public class NewEventRequest extends ActionRequest {
     }
 
     @Override
-    public void execute(CalendarHelper calendarHelper, TDHelper tdHelper) {
-        calendarHelper.addEvent(this);
+    public void execute(CalendarHelper calendarHelper, TDHelper tdHelper) throws IllegalStateException {
+        // check event data validity before adding event
+        if (eventData.title == null) {
+            throw new IllegalStateException("eventData.title for new event must not be null");
+        } else if (eventData.dateStart == null) {
+            throw new IllegalStateException("eventData.dateStart for new event must not be null");
+        } else if (eventData.dateEnd == null) {
+            throw new IllegalStateException("eventData.dateStart for new event must not be null");
+        } else {
+            calendarHelper.addEvent(this);
+        }
     }
 
     @Override

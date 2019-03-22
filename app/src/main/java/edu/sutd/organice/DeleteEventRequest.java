@@ -7,15 +7,15 @@ public class DeleteEventRequest extends ActionRequest {
 
     DeleteEventRequest(long chatId, EventData eventData){
         this.chatId = chatId;
-        // check eventData fields for validity before setting eventData
-        if (eventData.title == null) {
-            throw new IllegalArgumentException("eventData.title for event deletion must not be null");
-        }
         this.eventData = eventData;
     }
 
     @Override
-    public void execute(CalendarHelper calendarHelper, TDHelper tdHelper) {
+    public void execute(CalendarHelper calendarHelper, TDHelper tdHelper) throws IllegalStateException {
+        // check eventData fields for validity before setting eventData
+        if (eventData.title == null) {
+            throw new IllegalStateException("eventData.title for event deletion must not be null");
+        }
         calendarHelper.deleteEvent(this);
     }
 
