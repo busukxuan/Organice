@@ -173,6 +173,72 @@ public class CalendarHelper {
         }
     }
 
+    public List<EventData> getEvents(EventData template) {
+        Log.d(LOG_TAG, "retrieving event from calendar");
+
+        ContentResolver cr = context.getContentResolver();
+
+        Uri uri = CalendarContract.Events.CONTENT_URI;
+
+        // create selection based on available information from request
+        List<String> selectionComponents = new ArrayList<String>(5);
+        List<String> selectionArgs = new ArrayList<>(5);
+        if (template.title != null) {
+            selectionComponents.add("(" + CalendarContract.Events.TITLE + "= ?)");
+            selectionArgs.add(template.title);
+        }
+        if (template.dateStart != null) {
+            selectionComponents.add("(" + CalendarContract.Events.DTSTART + "= ?)");
+            selectionArgs.add(
+                    Long.toString(template.dateStart.getTime())
+            );
+        }
+        if (template.dateEnd != null) {
+            selectionComponents.add("(" + CalendarContract.Events.DTEND + "= ?)");
+            selectionArgs.add(
+                    Long.toString(template.dateEnd.getTime())
+            );
+        }
+        if (template.venue != null) {
+            selectionComponents.add("(" + CalendarContract.Events.EVENT_LOCATION + "= ?)");
+            selectionArgs.add(template.venue);
+        }
+        if (template.note != null) {
+            selectionComponents.add("(" + CalendarContract.Events.DESCRIPTION + "= ?)");
+            selectionArgs.add(template.note);
+        }
+
+        // query
+        Cursor cur = cr.query(
+                uri,
+                new String[]{},
+                "(" + String.join(" AND ", selectionComponents) + ")",
+                selectionArgs.toArray(new String[0]),
+                null
+        );
+
+        // get all the rows as EventDate
+        List<EventData> eventData = new ArrayList<EventData>();
+        if (cur == null) {
+            Log.d(LOG_TAG, "got null cursor");
+            return eventData;
+        }
+        if (cur.getCount() > 0) {
+            cur.moveToFirst();
+            for (; !cur.isAfterLast(); cur.moveToNext()) {
+                eventData.add(new EventData(
+                        cur.getString(PROJECTION_EVENT_TITLE_INDEX),
+                        new Date(cur.getLong(PROJECTION_EVENT_DTSTART_INDEX)),
+                        new Date(cur.getLong(PROJECTION_EVENT_DTEND_INDEX)),
+                        cur.getString(PROJECTION_EVENT_LOCATION_INDEX),
+                        cur.getString(PROJECTION_EVENT_DESCRIPTION_INDEX)
+                ));
+            }
+        }
+        cur.close();
+        return eventData;
+    }
+
     public EventData[] getNextEvents() {
         ContentResolver cr = context.getContentResolver();
 
