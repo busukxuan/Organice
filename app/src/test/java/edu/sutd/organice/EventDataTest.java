@@ -90,25 +90,23 @@ public class EventDataTest {
         };
         return Arrays.asList(parameters);
     }
-/*
+
     @Test
     public void parseMessage() {
         try {
-        EventData e1 = new EventData(title, makeDate(start[0], start[1], start[2]), makeDate(end[0], end[1], end[2]), venue, note);
-        EventData e2 = new EventData(title, makeDate(start[0], start[1], start[2]), makeDate(end[0], end[1], end[2]), venue, note);
-        assertEquals(e1, e2);
+            EventData e1 = new EventData(title, makeDate(start[0], start[1], start[2]), makeDate(end[0], end[1], end[2]), venue, note);
+            EventData e2 = new EventData(title, makeDate(start[0], start[1], start[2]), makeDate(end[0], end[1], end[2]), venue, note);
+            assertEquals(e1, e2);
+            if(expectedException != null){
+                fail("expected exception " + expectedException.toString());
+            }
         }
 
-        catch(NullPointerException e) {
-            fail("Date cannot be empty");
-        }
-
-        catch (ArrayIndexOutOfBoundsException e2) {
-            fail("missing input(s) for Date");
+        catch(Exception exception){
+            assertEquals(expectedException, exception.getClass());
         }
         
-
-    }*/
+    }
 
     @Test
     public void toTextLine() {
