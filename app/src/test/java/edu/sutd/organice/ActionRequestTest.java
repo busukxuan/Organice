@@ -63,11 +63,73 @@ public class ActionRequestTest {
                                             makeDate(1997, 1, 7),
                                             makeDate(1999, 12, 31),
                                             null,
-                                            "this one has no venue!!!"
+                                            "working test scenario"
                                     )
                             )
 
-                }
+                },
+                new Object[]{
+                        123,
+                        "Hello there this is just a sample text, \n" +
+                                "we are using this text for unit testing...\n" +
+                                "# organice new\n" +
+                                "Title: just some example title\n" +
+                                "Note: this one has no venue!!!\n" +
+                                "Start: 07/01/1997\n" +
+                                "End: 31/12/1999\n" +
+                                "# end organice\n",
+                        new NewEventRequest(
+                                123,
+                                new EventData(
+                                        "test two title",
+                                        makeDate(1997, 1, 7),
+                                        makeDate(1999, 12, 31),
+                                        null,
+                                        "no #end statement"
+                                )
+                        )
+                },
+                new Object[]{
+                        69,
+                        "Hello there this is just a sample text, \n" +
+                                "we are using this text for unit testing...\n" +
+                                "# organice new\n" +
+                                "Note: this one has no venue!!!\n" +
+                                "Start: 07/01/1997\n" +
+                                "End: 31/12/1999\n" +
+                                "# end organice\n" +
+                                "more sample text here~~~",
+                                new NewEventRequest(
+                                        69,
+                                        new EventData(
+                                                null, //test three
+                                                makeDate(1997, 1, 7),
+                                                makeDate(1999, 12, 31),
+                                                null,
+                                                "no title"
+                                        )
+                                )
+                },
+                new Object[] {
+                        12345,
+                                "# organice new\n" +
+                                "Title: just some example title\n" +
+                                "Note: this one has no venue!!!\n" +
+                                "Start: 07/01/1997\n" +
+                                "End: 31/12/1999\n" +
+                                "# end organice\n",
+                        new NewEventRequest(
+                                12345,
+                                new EventData(
+                                        "just some example title",
+                                        makeDate(1997, 1, 7),
+                                        makeDate(1999, 12, 31),
+                                        null,
+                                        "purely the creation of new event"
+                                )
+                        )
+
+                },
         };
         return Arrays.asList(parameters);
     }
