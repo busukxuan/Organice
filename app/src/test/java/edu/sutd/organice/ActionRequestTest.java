@@ -63,7 +63,7 @@ public class ActionRequestTest {
                                             makeDate(1997, 1, 7),
                                             makeDate(1999, 12, 31),
                                             null,
-                                            "working test scenario"
+                                            "this one has no venue!!!"
                                     )
                             )
 
@@ -73,8 +73,8 @@ public class ActionRequestTest {
                         "Hello there this is just a sample text, \n" +
                                 "we are using this text for unit testing...\n" +
                                 "# organice new\n" +
-                                "Title: just some example title\n" +
-                                "Note: this one has no venue!!!\n" +
+                                "Title: test two title\n" +
+                                "Note: no #end statement\n" +
                                 "Start: 07/01/1997\n" +
                                 "End: 31/12/1999\n" +
                                 "# end organice\n",
@@ -94,7 +94,8 @@ public class ActionRequestTest {
                         "Hello there this is just a sample text, \n" +
                                 "we are using this text for unit testing...\n" +
                                 "# organice new\n" +
-                                "Note: this one has no venue!!!\n" +
+                                "Title: just some example title\n" +
+                                "Note: no title\n" +
                                 "Start: 07/01/1997\n" +
                                 "End: 31/12/1999\n" +
                                 "# end organice\n" +
@@ -102,7 +103,7 @@ public class ActionRequestTest {
                                 new NewEventRequest(
                                         69,
                                         new EventData(
-                                                null, //test three
+                                                "just some example title", //test three
                                                 makeDate(1997, 1, 7),
                                                 makeDate(1999, 12, 31),
                                                 null,
@@ -114,7 +115,7 @@ public class ActionRequestTest {
                         12345,
                                 "# organice new\n" +
                                 "Title: just some example title\n" +
-                                "Note: this one has no venue!!!\n" +
+                                "Note: purely the creation of new event\n" +
                                 "Start: 07/01/1997\n" +
                                 "End: 31/12/1999\n" +
                                 "# end organice\n",
