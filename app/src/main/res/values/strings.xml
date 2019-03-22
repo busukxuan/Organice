@@ -2,4 +2,6 @@
     <string name="app_name">Organice</string>
     <string name="login_code">Login code:</string>
     <string name="login">Login</string>
+    <string name="phone_number">Phone Number:</string>
+    <string name="cancel">Cancel</string>
 </resources>
