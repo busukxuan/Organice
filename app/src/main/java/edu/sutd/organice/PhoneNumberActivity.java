@@ -34,6 +34,9 @@ public class PhoneNumberActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.putExtra("phoneNumber", phoneNumberEditText.getText().toString());
+                Intent intent2 = new Intent(PhoneNumberActivity.this,LoginCodeActivity.class);
+                intent2.putExtra("phoneNumber1", phoneNumberEditText.getText().toString());
+                startActivity(intent2);
                 setResult(0, intent);
                 finish();
         }});

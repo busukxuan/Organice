@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class LoginCodeActivity extends AppCompatActivity {
 
@@ -14,11 +15,17 @@ public class LoginCodeActivity extends AppCompatActivity {
 
     EditText loginCodeEditText;
     Button loginCodeButton;
+    Button CancelcodeButton;
+    TextView tv;
+    String st;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_code);
+        tv=findViewById(R.id.HP_num);
+        st=getIntent().getExtras().getString("phoneNumber1");
+        tv.setText(st);
 
         loginCodeEditText = findViewById(R.id.loginCodeEditText);
 
@@ -28,6 +35,17 @@ public class LoginCodeActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.putExtra("loginCode", loginCodeEditText.getText().toString());
+                setResult(0, intent);
+                finish();
+            }
+        });
+
+        CancelcodeButton = findViewById(R.id.CancelCodeButton);
+        CancelcodeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.putExtra("loginCode", "CANCELLED");
                 setResult(0, intent);
                 finish();
             }
