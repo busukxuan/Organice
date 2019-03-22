@@ -94,7 +94,6 @@ public class ActionRequestTest {
                         "Hello there this is just a sample text, \n" +
                                 "we are using this text for unit testing...\n" +
                                 "# organice new\n" +
-                                "Title: just some example title\n" +
                                 "Note: no title\n" +
                                 "Start: 07/01/1997\n" +
                                 "End: 31/12/1999\n" +
@@ -103,7 +102,7 @@ public class ActionRequestTest {
                                 new NewEventRequest(
                                         69,
                                         new EventData(
-                                                "just some example title", //test three
+                                                null, //test three
                                                 makeDate(1997, 1, 7),
                                                 makeDate(1999, 12, 31),
                                                 null,
