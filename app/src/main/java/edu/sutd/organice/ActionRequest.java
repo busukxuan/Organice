@@ -51,7 +51,7 @@ public abstract class ActionRequest {
             // everything before the first colon is the field name
             int colonIndex = line.indexOf(":");
             if (colonIndex < 0) {
-                throw new ParseException("", 0);
+                throw new ParseException("no colon in line", -1);
             }
             String field = line.substring(0, colonIndex).trim();
             String s = line.substring(colonIndex+1).trim();
