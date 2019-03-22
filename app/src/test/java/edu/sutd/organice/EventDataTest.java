@@ -56,4 +56,14 @@ public class EventDataTest {
         assertEquals(e1, e2);
     }
 
+
+    @Test
+    public void toTextLine() {
+        EventData e1 = new EventData(title, makeDate(start[0], start[1], start[2]), makeDate(end[0], end[1], end[2]), venue, note);
+        EventData e2 = new EventData(title, makeDate(start[0], start[1], start[2]), makeDate(end[0], end[1], end[2]), venue, note);
+        String s1 = e1.toTextLine();
+        String s2 = e2.toTextLine();
+        assertEquals(s1,s2);
+    }
+
 }
