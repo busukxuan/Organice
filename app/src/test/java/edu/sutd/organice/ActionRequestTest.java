@@ -154,6 +154,28 @@ public class ActionRequestTest {
 
                 },
                 new Object[] {
+                        3142,
+                        "Hello there this is just a sample text, \n" +
+                                "we are using this text for unit testing...\n" +
+                                "# organice delete\n" +
+                                "Note: this one has no venue!!!\n" +
+                                "Start: 07/01/1997\n" +
+                                "End: 31/12/1999\n" +
+                                "# end organice\n" +
+                                "more sample text here~~~",
+                        new DeleteEventRequest(
+                                3142,
+                                new EventData(
+                                        null,
+                                        makeDate(1997, 1, 7),
+                                        makeDate(1999, 12, 31),
+                                        null,
+                                        "this one has no venue!!!"
+                                )
+                        )
+
+                },
+                new Object[] {
                         12345,
                         "# organice list\n",    //test function list
                         new ListEventsRequest(
