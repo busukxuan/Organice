@@ -57,4 +57,19 @@ public class NewEventRequest extends ActionRequest {
                 ")";
     }
 
+    @Override
+    public boolean equals(Object other) {
+        if(other instanceof NewEventRequest) {
+            NewEventRequest castedOther = (NewEventRequest) other;
+            return chatId == castedOther.chatId &&
+                    eventData.equals(castedOther.eventData);
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) chatId + eventData.hashCode();
+    }
 }

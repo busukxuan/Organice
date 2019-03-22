@@ -22,4 +22,18 @@ public class ListEventsRequest extends ActionRequest {
     public String toString(){
         return "NewEventRequest(" + Long.toString(chatId) + ")";
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof ListEventsRequest) {
+            return chatId == ((ListEventsRequest) other).chatId;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) chatId;
+    }
 }

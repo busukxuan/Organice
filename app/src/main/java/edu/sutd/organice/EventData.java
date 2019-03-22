@@ -48,4 +48,61 @@ public class EventData {
                 note +
                 "\")";
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof EventData) {
+            EventData castedOther = (EventData) other;
+            boolean eq = true;
+            if (title != null) {
+                eq = eq && title.equals(castedOther.title);
+            } else {
+                eq = eq && (castedOther.title == null);
+            }
+            if (dateStart != null) {
+                eq = eq && dateStart.equals(castedOther.dateStart);
+            } else {
+                eq = eq && (castedOther.dateStart == null);
+            }
+            if (dateEnd != null) {
+                eq = eq && dateEnd.equals(castedOther.dateEnd);
+            } else {
+                eq = eq && (castedOther.dateEnd == null);
+            }
+            if (venue != null) {
+                eq = eq && venue.equals(castedOther.venue);
+            } else {
+                eq = eq && (castedOther.venue == null);
+            }
+            if (note != null) {
+                eq = eq && note.equals(castedOther.note);
+            } else {
+                eq = eq && (castedOther.note == null);
+            }
+            return eq;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        int sum = 0;
+        if (title != null) {
+            sum += title.hashCode();
+        }
+        if (dateStart != null) {
+            sum += dateStart.hashCode();
+        }
+        if (dateEnd != null) {
+            sum += dateEnd.hashCode();
+        }
+        if (venue != null) {
+            sum += venue.hashCode();
+        }
+        if (note != null) {
+            sum += note.hashCode();
+        }
+        return sum;
+    }
 }

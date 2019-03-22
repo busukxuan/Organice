@@ -18,7 +18,6 @@ public abstract class ActionRequest {
 
         // check each line for command tag
         String[] lines = text.split("\n");
-        Log.d(LOG_TAG, "n_ines: " + Integer.toString(lines.length));
         for (int i = 0; i < lines.length; i++) {
 
             if (lines[i].equals("# organice new")) {
@@ -53,8 +52,8 @@ public abstract class ActionRequest {
             if (colonIndex < 0) {
                 throw new ParseException("", 0);
             }
-            String field = line.substring(0, colonIndex);
-            String s = line.substring(colonIndex+1);
+            String field = line.substring(0, colonIndex).trim();
+            String s = line.substring(colonIndex+1).trim();
             switch (field) {
                 case "Title":
                     title = s;
@@ -83,6 +82,7 @@ public abstract class ActionRequest {
     public abstract void execute(CalendarHelper calendarHelper, TDHelper tdHelper);
 
     public static void execute(CalendarHelper calendarHelper, TDHelper tdHelper, ActionRequest request) {
+        Log.d(LOG_TAG, "executing request");
         request.execute(calendarHelper, tdHelper);
     }
 
@@ -92,4 +92,9 @@ public abstract class ActionRequest {
             execute(calendarHelper, tdHelper, request);
         }
     }
+
+    @Override
+    public abstract boolean equals(Object other);
+
+    public abstract int hashCode();
 }
