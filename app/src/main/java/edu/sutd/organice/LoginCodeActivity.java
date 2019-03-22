@@ -15,6 +15,7 @@ public class LoginCodeActivity extends AppCompatActivity {
 
     EditText loginCodeEditText;
     Button loginCodeButton;
+    Button CancelcodeButton;
     TextView tv;
     String st;
 
@@ -34,6 +35,17 @@ public class LoginCodeActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.putExtra("loginCode", loginCodeEditText.getText().toString());
+                setResult(0, intent);
+                finish();
+            }
+        });
+
+        CancelcodeButton = findViewById(R.id.CancelCodeButton);
+        CancelcodeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.putExtra("loginCode", "CANCELLED");
                 setResult(0, intent);
                 finish();
             }

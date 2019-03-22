@@ -81,7 +81,8 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case LOGIN_CODE_REQUEST_CODE:
                 String loginCode = data.getStringExtra("loginCode");
-                tdHelper.sendLoginCode(loginCode);
+                if(loginCode=="CANCELLED") break;
+                else tdHelper.sendLoginCode(loginCode);
                 break;
             default:
                 Log.wtf(LOG_TAG, "unexpected request code " + Integer.toString(requestCode));
