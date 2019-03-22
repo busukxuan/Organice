@@ -48,7 +48,7 @@ public class ActionRequestTest {
     @Parameterized.Parameters
     public static Collection<Object[]> parameters() {
         Object[][] parameters = new Object[][] {
-                new Object[] {
+                new Object[] {  //new 0
                             3142,
                             "Hello there this is just a sample text, \n" +
                                     "we are using this text for unit testing...\n" +
@@ -71,7 +71,7 @@ public class ActionRequestTest {
                             ),
                             null
                 },
-                new Object[]{
+                new Object[]{   //new 1
                         123,
                         "Hello there this is just a sample text, \n" +
                                 "we are using this text for unit testing...\n" +
@@ -93,7 +93,7 @@ public class ActionRequestTest {
                         ),
                         null
                 },
-                new Object[]{
+                new Object[]{   //new 2
                         69,
                         "Hello there this is just a sample text, \n" +
                                 "we are using this text for unit testing...\n" +
@@ -115,7 +115,7 @@ public class ActionRequestTest {
                                 ),
                         null
                 },
-                new Object[] {
+                new Object[] {  //new 3
                         12345,
                                 "# organice new\n" +
                                 "Title: just some example title\n" +
@@ -136,7 +136,76 @@ public class ActionRequestTest {
                         null
 
                 },
-                new Object[] {
+                new Object[] { //new 4
+                        3142,
+                        "Hello there this is just a sample text, \n" +
+                                "we are using this text for unit testing...\n" +
+                                "# organice new\n" +
+                                "Title: just some example title\n" +
+                                "this one has no venue!!!\n" +
+                                "Start: 07/01/1997\n" +
+                                "End: 31/12/1999\n" +
+                                "# end organice\n" +
+                                "more sample text here~~~",
+                        new NewEventRequest(
+                                3142,
+                                new EventData(
+                                        "just some example title",
+                                        makeDate(1997, 1, 7),
+                                        makeDate(1999, 12, 31),
+                                        null,
+                                        "this one has no note!!!"
+                                )
+                        ),
+                        ParseException.class
+                },
+                new Object[] {  //new5
+                        3142,
+                        "Hello there this is just a sample text, \n" +
+                                "we are using this text for unit testing...\n" +
+                                "# organice new\n" +
+                                "Title: just some example title\n" +
+                                "Extra: this one has no venue!!!\n" +
+                                "Start: 07/01/1997\n" +
+                                "End: 31/12/1999\n" +
+                                "# end organice\n" +
+                                "more sample text here~~~",
+                        new NewEventRequest(
+                                3142,
+                                new EventData(
+                                        "just some example title",
+                                        makeDate(1997, 1, 7),
+                                        makeDate(1999, 12, 31),
+                                        null,
+                                        "this one has note called extra!!!"
+                                )
+                        ),
+                        ParseException.class
+                },
+                new Object[] { //new 6
+                        3142,
+                        "Hello there this is just a sample text, \n" +
+                                "we are using this text for unit testing...\n" +
+                                "# organice new\n" +
+                                "Title: just some example title\n" +
+                                "Note: this one has no start!!!\n" +
+                                "07/01/1997\n" +
+                                "End: 31/12/1999\n" +
+                                "# end organice\n" +
+                                "more sample text here~~~",
+                        new NewEventRequest(
+                                3142,
+                                new EventData(
+                                        "just some example title",
+                                        makeDate(1997, 1, 7),
+                                        makeDate(1999, 12, 31),
+                                        null,
+                                        "this one has no start!!!"
+                                )
+                        ),
+                        ParseException.class
+                },
+                new Object[] { //delete 1
                         3142,
                         "Hello there this is just a sample text, \n" +
                                 "we are using this text for unit testing...\n" +
@@ -160,7 +229,7 @@ public class ActionRequestTest {
                         null
 
                 },
-                new Object[] {
+                new Object[] {  //delete 2
                         3142,
                         "Hello there this is just a sample text, \n" +
                                 "we are using this text for unit testing...\n" +
@@ -181,6 +250,54 @@ public class ActionRequestTest {
                                 )
                         ),
                         null
+
+                },
+                new Object[] { //delete 3
+                        3142,
+                        "Hello there this is just a sample text, \n" +
+                                "we are using this text for unit testing...\n" +
+                                "# organice delete\n" +
+                                "Title: just some example title\n" +
+                                "this one has no venue!!!\n" +
+                                "Start: 07/01/1997\n" +
+                                "End: 31/12/1999\n" +
+                                "# end organice\n" +
+                                "more sample text here~~~",
+                        new DeleteEventRequest(
+                                3142,
+                                new EventData(
+                                        "just some example title",
+                                        makeDate(1997, 1, 7),
+                                        makeDate(1999, 12, 31),
+                                        null,
+                                        "this one has no note!!!"
+                                )
+                        ),
+                        ParseException.class
+
+                },
+                new Object[] { //delete 1
+                        3142,
+                        "Hello there this is just a sample text, \n" +
+                                "we are using this text for unit testing...\n" +
+                                "# organice delete\n" +
+                                "Title: just some example title\n" +
+                                "Extra: this one has no venue!!!\n" +
+                                "Start: 07/01/1997\n" +
+                                "End: 31/12/1999\n" +
+                                "# end organice\n" +
+                                "more sample text here~~~",
+                        new DeleteEventRequest(
+                                3142,
+                                new EventData(
+                                        "just some example title",
+                                        makeDate(1997, 1, 7),
+                                        makeDate(1999, 12, 31),
+                                        null,
+                                        "this one has no note as extra!!!"
+                                )
+                        ),
+                        ParseException.class
 
                 },
                 new Object[] {
