@@ -48,8 +48,7 @@ public class MainActivity extends AppCompatActivity {
     public static final int PHONE_NUMBER_REQUEST_CODE = 0;
     public static final int LOGIN_CODE_REQUEST_CODE = 1;
 
-    private static final int CALENDAR_READ_PERMISSION_REQUEST_CODE = 0;
-    private static final int CALENDAR_WRITE_PERMISSION_REQUEST_CODE = 0;
+    private static final int CALENDAR_PERMISSIONS_REQUEST_CODE = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,27 +102,27 @@ public class MainActivity extends AppCompatActivity {
                         this,
                         Manifest.permission.READ_CALENDAR
                 ) != PackageManager.PERMISSION_GRANTED ||
-                        ContextCompat.checkSelfPermission(
-                                this,
-                                Manifest.permission.WRITE_CALENDAR
-                        ) != PackageManager.PERMISSION_GRANTED
+                ContextCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.WRITE_CALENDAR
+                ) != PackageManager.PERMISSION_GRANTED
         ) {
             // calendar permissions not granted
             Log.d(LOG_TAG, "requesting calendar permissions");
             ActivityCompat.requestPermissions(
                     this,
                     new String[]{Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR},
-                    CALENDAR_READ_PERMISSION_REQUEST_CODE);
+                    CALENDAR_PERMISSIONS_REQUEST_CODE);
         }
     }
 
-    public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResult) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResult) {
         Log.d(LOG_TAG, "received permission request response");
         switch (requestCode) {
-            case CALENDAR_READ_PERMISSION_REQUEST_CODE:
+            case CALENDAR_PERMISSIONS_REQUEST_CODE:
                 if (
                         grantResult[0] != PackageManager.PERMISSION_GRANTED ||
-                                grantResult[1] != PackageManager.PERMISSION_GRANTED
+                        grantResult[1] != PackageManager.PERMISSION_GRANTED
                 ) {
                     // do nothing for now
                 }
