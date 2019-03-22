@@ -12,7 +12,9 @@ import java.util.Date;
 
 
 
+
 public class DbHelper extends SQLiteOpenHelper {
+
     //information of database
     private final Context context;
     private static String PACKAGE_NAME;
@@ -36,13 +38,13 @@ public class DbHelper extends SQLiteOpenHelper {
         return DbHelper;
     }
 
+
     //SQL_CREATE_TABLE generates the table, fillTable shows all data entries in DB
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(EventContract.EventSql.SQL_CREATE_TABLE);
         fillTable(sqLiteDatabase);
     }
-
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
@@ -51,11 +53,19 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
 
-
     private void fillTable(SQLiteDatabase sqLiteDatabase){
-        ArrayList<NewEventRequest> arraylist = new ArrayList<>();
-        PACKAGE_NAME = context.getPackageName();
 
+        //query all data in DB and save in an arraylist
+        ArrayList<NewEventRequest> arraylist = new ArrayList<>();
+        Cursor cursor = sqLiteDatabase.rawQuery(EventContract.EventSql.SQL_QUERY_ALL_ROWS, null);
+        int rowNum = cursor.getCount();
+
+        for(int j=0; j<rowNum; j++) {
+            NewEventRequest newEventRequest = getDataFromCursor(j, cursor);
+            arraylist.add(newEventRequest);
+        }
+
+        //for each row, fill table by columns
         for (int i=0; i<arraylist.size(); i++) {
             ContentValues cv = new ContentValues();
             cv.put(EventContract.EventEntry.COL_CHATID, arraylist.get(i).getChatID());
@@ -78,7 +88,7 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
 
-    //used in queryOneRow
+
     private NewEventRequest getDataFromCursor(int position, Cursor cursor){
         long chatID;
         String title;
@@ -119,6 +129,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
 
 
+
     //SQL operations: query, insert, delete
 
 
@@ -132,12 +143,11 @@ public class DbHelper extends SQLiteOpenHelper {
 
         return getDataFromCursor(position, cursor);
     }
-    //TODO: query many rows?
 
 
 
-    //TODO: input may not be a completely filled NewEventRequest for insert & delete
-
+    //input may not be a completely filled NewEventRequest for insert & delete
+    
     public void insertOneRow(NewEventRequest newEventRequest){
         if( writeableDb == null){
             writeableDb = getWritableDatabase();
@@ -145,7 +155,6 @@ public class DbHelper extends SQLiteOpenHelper {
 
         ContentValues contentValues = new ContentValues();
 
-        //TODO: Date datatype tbc
         contentValues.put(EventContract.EventEntry.COL_CHATID, newEventRequest.chatId);
         contentValues.put(EventContract.EventEntry.COL_TITLE, newEventRequest.eventData.title);
 
@@ -167,13 +176,13 @@ public class DbHelper extends SQLiteOpenHelper {
 
 
 
-    //TODO: input type may vary
+    //where clause type may vary
     public void deleteOneRow(NewEventRequest newEventRequest){
         if( writeableDb == null){
             writeableDb = getWritableDatabase();
         }
         
-        String WHERE_CLAUSE = EventContract.EventEntry.COL_CHATID + " = ?";
+        String WHERE_CLAUSE = EventContract.EventEntry.COL_TITLE + " = ?";
         String[] WHERE_ARGS = new String[]{"title"};
 
         int rowsDeleted = writeableDb.delete(EventContract.EventEntry.TABLE_NAME, WHERE_CLAUSE, WHERE_ARGS);
