@@ -10,10 +10,12 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Date;
 
-
+import static android.content.ContentValues.TAG;
 
 
 public class DbHelper extends SQLiteOpenHelper {
+
+    private static String LOG_TAG = "DbHelper";
 
     //information of database
     private final Context context;
@@ -44,6 +46,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(EventContract.EventSql.SQL_CREATE_TABLE);
         fillTable(sqLiteDatabase);
+        Log.i(LOG_TAG, "onCreate: table filled");
     }
 
     @Override
@@ -59,11 +62,14 @@ public class DbHelper extends SQLiteOpenHelper {
         ArrayList<NewEventRequest> arraylist = new ArrayList<>();
         Cursor cursor = sqLiteDatabase.rawQuery(EventContract.EventSql.SQL_QUERY_ALL_ROWS, null);
         int rowNum = cursor.getCount();
+        Log.i(TAG, "fillTable: cursor object created. NumOfRows = "+ rowNum);
 
         for(int j=0; j<rowNum; j++) {
             NewEventRequest newEventRequest = getDataFromCursor(j, cursor);
             arraylist.add(newEventRequest);
         }
+
+        Log.i(TAG, "fillTable: all NewEventRequest added to arraylist");
 
         //for each row, fill table by columns
         for (int i=0; i<arraylist.size(); i++) {
@@ -84,7 +90,9 @@ public class DbHelper extends SQLiteOpenHelper {
             cv.put(EventContract.EventEntry.COL_NOTE, arraylist.get(i).getNote());
 
             sqLiteDatabase.insert(EventContract.EventEntry.TABLE_NAME, null, cv);
+            Log.i(TAG, "fillTable: inserted one row");
         }
+        Log.i(TAG, "fillTable: inserted all");
     }
 
 
@@ -124,6 +132,8 @@ public class DbHelper extends SQLiteOpenHelper {
 
         eventData = new EventData(title, dateStart, dateEnd, venue, note);
 
+        Log.i(TAG, "getDataFromCursor: Row"+position);
+
         return new NewEventRequest(chatID, eventData);
     }
 
@@ -147,7 +157,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
 
     //input may not be a completely filled NewEventRequest for insert & delete
-    
+
     public void insertOneRow(NewEventRequest newEventRequest){
         if( writeableDb == null){
             writeableDb = getWritableDatabase();
@@ -171,6 +181,7 @@ public class DbHelper extends SQLiteOpenHelper {
         contentValues.put(EventContract.EventEntry.COL_NOTE, newEventRequest.eventData.note);
 
         writeableDb.insert(EventContract.EventEntry.TABLE_NAME, null, contentValues);
+        Log.i(TAG, "insertOneRow: finished");
 
     }
 
