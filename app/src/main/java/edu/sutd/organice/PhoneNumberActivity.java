@@ -1,15 +1,22 @@
 package edu.sutd.organice;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class PhoneNumberActivity extends AppCompatActivity {
-
+    private static final int READ_PHONE_STATE_PERMISSION_REQUEST_CODE = 1;
     private static final String LOG_TAG = "PhoneNumberActivity";
 
     EditText phoneNumberEditText;
@@ -21,7 +28,6 @@ public class PhoneNumberActivity extends AppCompatActivity {
         setContentView(R.layout.activity_phone_number);
 
         phoneNumberEditText = findViewById(R.id.phoneNumberEditText);
-
         phoneNumberButton = findViewById(R.id.phoneNumberButton);
         phoneNumberButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -30,8 +36,48 @@ public class PhoneNumberActivity extends AppCompatActivity {
                 intent.putExtra("phoneNumber", phoneNumberEditText.getText().toString());
                 setResult(0, intent);
                 finish();
-            }
-        });
+        }});
+        autofillPhoneNumber();
         Log.i(LOG_TAG, "waiting for user to enter phone number");
+    }
+
+    private void autofillPhoneNumber() {
+        Log.d(LOG_TAG, "attempting to autofill phone number");
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_PHONE_STATE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Permission is not granted
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.READ_PHONE_STATE)) {
+                // do nothing for now
+            } else {
+                Log.d(LOG_TAG, "requesting for permission to read phone state");
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_PHONE_STATE}, READ_PHONE_STATE_PERMISSION_REQUEST_CODE);
+            }
+        } else {
+            TelephonyManager tm = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
+            phoneNumberEditText.setText(tm.getLine1Number());
+            Log.d(LOG_TAG, "autofilled phone number " + tm.getLine1Number());
+        }
+    }
+
+    public void onRequestPermissionsResult(int requestCode, String[] permission, int[] grantResult) {
+        if (requestCode == READ_PHONE_STATE_PERMISSION_REQUEST_CODE) {
+            if (grantResult[0] == PackageManager.PERMISSION_GRANTED) {
+                if (phoneNumberEditText.getText().toString().isEmpty()) {
+                    TelephonyManager tm = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
+                    phoneNumberEditText.setText(tm.getLine1Number(), TextView.BufferType.EDITABLE);
+                    Log.d(LOG_TAG, "autofilled phone number " + tm.getLine1Number());
+                } else {
+                    Log.wtf(LOG_TAG, "phone number already entered by user, not autofilling");
+                }
+            } else {
+                Log.wtf(LOG_TAG, "permission request denied");
+            }
+        } else {
+            Log.wtf(LOG_TAG, "unexpected permission request code");
+        }
     }
 }
