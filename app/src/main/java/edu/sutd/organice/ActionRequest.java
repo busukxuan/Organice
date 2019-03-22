@@ -13,7 +13,8 @@ public abstract class ActionRequest {
     private static final String LOG_TAG = "ActionRequest";
 
     public static ActionRequest parseMessage(TdApi.Message message) throws ParseException {
-        Log.d(LOG_TAG, "parsing message");
+
+        //Log.d(LOG_TAG, "parsing message");
         String text = ((TdApi.MessageText) message.content).text.text;
 
         // check each line for command tag
