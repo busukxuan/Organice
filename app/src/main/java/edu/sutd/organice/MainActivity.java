@@ -66,9 +66,13 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        tdHelper = new TDHelper(this, tdHandler);
 
         getCalendarPermissions();
+
+        Authenticator.addAccount(this, "Organice");
+        SyncAdapter.syncNow(this);
+
+        tdHelper = new TDHelper(this, tdHandler);
     }
 
     @Override

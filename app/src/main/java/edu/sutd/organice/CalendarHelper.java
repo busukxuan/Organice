@@ -3,6 +3,7 @@ package edu.sutd.organice;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.CalendarContract;
@@ -20,6 +21,7 @@ public class CalendarHelper {
 
     private Context context;
     private long calendarID;
+    private Resources resources;
 
 
     private static String[] EVENT_PROJECTION = new String[]{
@@ -39,6 +41,7 @@ public class CalendarHelper {
 
     CalendarHelper(Context c) {
         context = c;
+        resources = c.getResources();
         initializeCalendarID();
     }
 
@@ -50,8 +53,7 @@ public class CalendarHelper {
         Uri uri = CalendarContract.Calendars.CONTENT_URI;
         String selection = "((" + CalendarContract.Calendars.ACCOUNT_TYPE + " = ?))";
         String[] selectionArgs = new String[]{
-//                CalendarContract.ACCOUNT_TYPE_LOCAL
-                "com.google"
+                resources.getString(R.string.account_type)
         };
         String[] calendarProjection = new String[]{
                 CalendarContract.Calendars._ID,
