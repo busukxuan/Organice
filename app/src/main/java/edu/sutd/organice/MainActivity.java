@@ -1,6 +1,10 @@
 package edu.sutd.organice;
 
 import android.Manifest;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -15,6 +19,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
+
+    public static final int TD_UPDATE_JOB_ID = 0;
 
     TextView textView;
     Button logoutButton;
@@ -73,6 +79,8 @@ public class MainActivity extends AppCompatActivity {
         SyncAdapter.syncNow(this);
 
         tdHelper = new TDHelper(this, tdHandler);
+
+        initializeTDUpdateJob();
     }
 
     @Override
@@ -131,6 +139,30 @@ public class MainActivity extends AppCompatActivity {
                     // do nothing for now
                 }
                 break;
+        }
+    }
+
+    public void initializeTDUpdateJob() {
+        JobScheduler jobScheduler = (JobScheduler) this.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        if (jobScheduler == null) {
+            Log.wtf(LOG_TAG, "failed to obtain job scheduler when initializing TD update job");
+            return;
+        }
+        JobInfo updateJob = jobScheduler.getPendingJob(TD_UPDATE_JOB_ID);
+        if (updateJob == null) {
+            // job hasn't been set up yet, set up now
+            JobInfo.Builder builder = new JobInfo.Builder(
+                    TD_UPDATE_JOB_ID,
+                    new ComponentName(this.getApplicationContext(), TDUpdateJobService.class)
+            )
+                    .setPeriodic(5000)
+                    .setPersisted(true)
+                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
+            JobInfo job = builder.build();
+            jobScheduler.schedule(job);
+            Log.d(LOG_TAG, "initialized TD update job");
+        } else {
+            Log.d(LOG_TAG, "TD update job already initialized");
         }
     }
 }
