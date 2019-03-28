@@ -11,7 +11,6 @@ import android.widget.Toast;
 import org.drinkless.td.libcore.telegram.Client;
 import org.drinkless.td.libcore.telegram.TdApi;
 
-import java.text.ParseException;
 import java.util.Locale;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -20,9 +19,13 @@ import java.util.concurrent.locks.ReentrantLock;
 public class TDHelper {
     private static final String LOG_TAG = "TDHelper";
 
+    public static final int PHONE_NUMBER_REQUEST_MESSAGE_CODE = 0;
+    public static final int LOGIN_CODE_REQUEST_MESSAGE_CODE = 1;
+    public static final int UPDATE_MESSAGE_CODE = 2;
+    public static final int RESULT_MESSAGE_CODE = 3;
+
     private final Context context;
     private final Handler uiHandler;
-    private final CalendarHelper calendarHelper;
     private Client client;
     private final Client.ResultHandler defaultHandler = new TDHelper.DefaultHandler();
     // authorization variables
@@ -45,7 +48,6 @@ public class TDHelper {
     public TDHelper(Context context, Handler handler) {
         this.context = context;
         this.uiHandler = handler;
-        this.calendarHelper = new CalendarHelper(context);
 
         // create client
         client = Client.create(new TDHelper.UpdatesHandler(), null, null);
@@ -54,7 +56,10 @@ public class TDHelper {
     private class DefaultHandler implements Client.ResultHandler {
         @Override
         public void onResult(TdApi.Object object) {
-            Log.d(LOG_TAG, "TDLib client result: " + object.toString());
+            Message message = new Message();
+            message.what = RESULT_MESSAGE_CODE;
+            message.obj = object;
+            uiHandler.sendMessage(message);
         }
     }
 
@@ -67,9 +72,11 @@ public class TDHelper {
                     onAuthorizationStateUpdated(((TdApi.UpdateAuthorizationState) object).authorizationState);
                     break;
 
-                case TdApi.UpdateNewMessage.CONSTRUCTOR:
-                    onNewMessage((TdApi.UpdateNewMessage) object);
-                    break;
+                default:
+                    Message message = new Message();
+                    message.what = UPDATE_MESSAGE_CODE;
+                    message.obj = object;
+                    uiHandler.sendMessage(message);
 
             }
         }
@@ -128,7 +135,7 @@ public class TDHelper {
                 // send phone number
                 Log.d(LOG_TAG, "prompting UI thread for phone number");
                 Message message = new Message();
-                message.arg1 = MainActivity.PHONE_NUMBER_REQUEST_CODE;
+                message.what = MainActivity.PHONE_NUMBER_REQUEST_CODE;
                 uiHandler.sendMessage(message);
                 break;
             }
@@ -136,7 +143,7 @@ public class TDHelper {
                 // send login code
                 Log.d(LOG_TAG, "prompting UI thread for login code");
                 Message message = new Message();
-                message.arg1 = MainActivity.LOGIN_CODE_REQUEST_CODE;
+                message.what = MainActivity.LOGIN_CODE_REQUEST_CODE;
                 uiHandler.sendMessage(message);
                 break;
             }
@@ -174,20 +181,6 @@ public class TDHelper {
                 break;
             default:
                 Log.e(LOG_TAG, "unexpected authorization state: " + authorizationState.toString());
-        }
-    }
-
-    private void onNewMessage(TdApi.UpdateNewMessage updateNewMessage) {
-        Log.i(LOG_TAG, "received new message");
-        TdApi.MessageContent content = updateNewMessage.message.content;
-        if (content instanceof TdApi.MessageText) {
-            try {
-                ActionRequest.execute(calendarHelper, this, updateNewMessage.message);
-            } catch (ParseException e) {
-                Log.e(LOG_TAG, "parse error");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
     }
 

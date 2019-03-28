@@ -18,6 +18,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import org.drinkless.td.libcore.telegram.TdApi;
+
+import java.text.ParseException;
+
 public class MainActivity extends AppCompatActivity {
 
     public static final int TD_UPDATE_JOB_ID = 0;
@@ -25,25 +29,47 @@ public class MainActivity extends AppCompatActivity {
     TextView textView;
     Button logoutButton;
 
+    private CalendarHelper calendarHelper;
+
     private TDHelper tdHelper;
     private Handler tdHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
-            int requestCode = msg.arg1;
-            Log.d(LOG_TAG, "received message from TDHelper with requestCode " + Integer.toString(requestCode));
             Intent intent;
-            switch (requestCode) {
-                case PHONE_NUMBER_REQUEST_CODE:
+            switch (msg.what) {
+
+                case TDHelper.PHONE_NUMBER_REQUEST_MESSAGE_CODE:
                     intent = new Intent(MainActivity.this, PhoneNumberActivity.class);
                     startActivityForResult(intent, PHONE_NUMBER_REQUEST_CODE);
                     break;
-                case LOGIN_CODE_REQUEST_CODE:
+
+                case TDHelper.LOGIN_CODE_REQUEST_MESSAGE_CODE:
                     intent = new Intent(MainActivity.this, LoginCodeActivity.class);
                     startActivityForResult(intent, LOGIN_CODE_REQUEST_CODE);
                     break;
-                default:
-                    Log.wtf(LOG_TAG, "unexpected request code " + Integer.toString(requestCode));
+
+                case TDHelper.UPDATE_MESSAGE_CODE:
+                    if (((TdApi.Object) msg.obj).getConstructor() == TdApi.UpdateNewMessage.CONSTRUCTOR) {
+                        Log.i(LOG_TAG, "received new message");
+                        TdApi.UpdateNewMessage updateNewMessage = (TdApi.UpdateNewMessage) msg.obj;
+                        TdApi.MessageContent content = updateNewMessage.message.content;
+                        if (content instanceof TdApi.MessageText) {
+                            try {
+                                ActionRequest.execute(calendarHelper, tdHelper, updateNewMessage.message);
+                            } catch (ParseException e) {
+                                Log.e(LOG_TAG, "parse error");
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
                     break;
+
+                case TDHelper.RESULT_MESSAGE_CODE:
+                    break;
+
+                default:
+                    Log.wtf(LOG_TAG, "unexpected message code " + Integer.toString(msg.what));
             }
             return true;
         }
@@ -78,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
         Authenticator.addAccount(this, "Organice");
         SyncAdapter.syncNow(this);
 
+        calendarHelper = new CalendarHelper(this);
         tdHelper = new TDHelper(this, tdHandler);
 
         initializeTDUpdateJob();
