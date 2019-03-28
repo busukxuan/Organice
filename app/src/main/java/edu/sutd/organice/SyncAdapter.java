@@ -62,8 +62,10 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_NAME, resources.getString(R.string.app_name))
                 .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_TYPE, resources.getString(R.string.account_type))
                 .build();
-        String selection = "((" + CalendarContract.Calendars.NAME + " = ?) AND (" + CalendarContract.Calendars.VISIBLE + " = ?))";
-        String[] selectionArgs = new String[]{resources.getString(R.string.app_name), "1"};
+        String selection = "((" + CalendarContract.Calendars.NAME + " = ?) AND ("
+                + CalendarContract.Calendars.VISIBLE + " = ?) AND ("
+                + CalendarContract.Calendars.ACCOUNT_TYPE + " = ?))";
+        String[] selectionArgs = new String[]{resources.getString(R.string.app_name), "1", resources.getString(R.string.account_type)};
 
         Cursor cur = null;
         try {
@@ -83,15 +85,19 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             case 0:
                 // calendar not created, create one
                 ContentValues values = new ContentValues();
-                values.put(CalendarContract.Calendars.NAME, resources.getString(R.string.app_name));
-                values.put(CalendarContract.Calendars.CALENDAR_DISPLAY_NAME, resources.getString(R.string.app_name));
                 values.put(CalendarContract.Calendars.ACCOUNT_NAME, resources.getString(R.string.app_name));
                 values.put(CalendarContract.Calendars.ACCOUNT_TYPE, resources.getString(R.string.account_type));
+                values.put(CalendarContract.Calendars.NAME, resources.getString(R.string.app_name));
+                values.put(CalendarContract.Calendars.CALENDAR_DISPLAY_NAME, resources.getString(R.string.app_name));
+                values.put(CalendarContract.Calendars.CALENDAR_COLOR, getArbitraryColor());
+                values.put(CalendarContract.Calendars.CALENDAR_ACCESS_LEVEL, CalendarContract.Calendars.CAL_ACCESS_OWNER);
+                values.put(CalendarContract.Calendars.OWNER_ACCOUNT, resources.getString(R.string.app_name));
+                values.put(CalendarContract.Calendars.SYNC_EVENTS, 0);
                 values.put(CalendarContract.Calendars.VISIBLE, 1);
                 try {
                     Uri organiceCalendarUri = provider.insert(uri, values);
                 } catch(RemoteException e) {
-                    Log.e(LOG_TAG, "remote exception in content provider client when insering calendar");
+                    Log.e(LOG_TAG, "remote exception in content provider client when inserting calendar");
                     return;
                 }
                 Log.i(LOG_TAG, "creating Organice calendar");
@@ -105,6 +111,15 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 Log.w(LOG_TAG, "found multiple calendars named 'organice'");
         }
         provider.close();
+    }
+
+    private int getArbitraryColor() {
+        Uri uri = CalendarContract.Colors.CONTENT_URI;
+        Cursor cur = contentResolver.query(uri, new String[]{CalendarContract.Colors._ID}, null, null, null);
+        cur.moveToFirst();
+        int color = cur.getInt(0);
+        cur.close();
+        return color;
     }
 
     public static void syncNow(Context context) {

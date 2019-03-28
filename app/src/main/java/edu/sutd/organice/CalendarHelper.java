@@ -51,14 +51,20 @@ public class CalendarHelper {
         Cursor cur;
         ContentResolver cr = context.getContentResolver();
         Uri uri = CalendarContract.Calendars.CONTENT_URI;
-        String selection = "((" + CalendarContract.Calendars.ACCOUNT_TYPE + " = ?))";
+        String selection = "((" + CalendarContract.Calendars.ACCOUNT_TYPE + " = ?) AND ("
+                + CalendarContract.Calendars.ACCOUNT_NAME + " = ?))";
         String[] selectionArgs = new String[]{
-                resources.getString(R.string.account_type)
+                resources.getString(R.string.account_type),
+                resources.getString(R.string.app_name)
         };
         String[] calendarProjection = new String[]{
                 CalendarContract.Calendars._ID,
+                CalendarContract.Calendars.NAME,
                 CalendarContract.Calendars.ACCOUNT_TYPE
         };
+        final int PROJECTION_CALENDAR_ID_INDEX = 0;
+        final int PROJECTION_CALENDAR_NAME_INDEX = 1;
+        final int PROJECTION_CALENDAR_ACCOUNT_TYPE_INDEX = 2;
         try {
             cur = cr.query(uri, calendarProjection, selection, selectionArgs, null);
         } catch (SecurityException e) {
@@ -74,11 +80,14 @@ public class CalendarHelper {
         if (count < 1) {
             Log.e(LOG_TAG, "unable to obtain calendar ID: no local calendar found");
         } else {
-            if (count > 1) {
-                Log.i(LOG_TAG, "found multiple calendars, arbitrarily using one");
-            }
             cur.moveToNext();
-            calendarID = cur.getLong(0);
+            String name = cur.getString(PROJECTION_CALENDAR_NAME_INDEX);
+            if (count > 1) {
+                Log.w(LOG_TAG, "found multiple calendars, arbitrarily using \"" + name + "\"");
+            } else {
+                Log.d(LOG_TAG, "found calendar \"" + name + "\"");
+            }
+            calendarID = cur.getLong(PROJECTION_CALENDAR_ID_INDEX);
         }
         cur.close();
     }
@@ -117,8 +126,10 @@ public class CalendarHelper {
         Uri uri = CalendarContract.Events.CONTENT_URI;
 
         // create selection based on available information from request
-        List<String> selectionComponents = new ArrayList<String>(5);
-        List<String> selectionArgs = new ArrayList<>(5);
+        List<String> selectionComponents = new ArrayList<String>(6);
+        List<String> selectionArgs = new ArrayList<>(6);
+        selectionComponents.add("(" + CalendarContract.Events.CALENDAR_ID + "= ?)");
+        selectionArgs.add(Long.toString(calendarID));
         if (eventData.title != null) {
             selectionComponents.add("(" + CalendarContract.Events.TITLE + "= ?)");
             selectionArgs.add(eventData.title);
@@ -157,7 +168,6 @@ public class CalendarHelper {
         switch (matches) {
             case 1:
                 // one matching event, delete
-                cur.close();
                 cr.delete(
                         uri,
                         "(" + String.join(" AND ", selectionComponents) + ")",
@@ -183,8 +193,10 @@ public class CalendarHelper {
         Uri uri = CalendarContract.Events.CONTENT_URI;
 
         // create selection based on available information from request
-        List<String> selectionComponents = new ArrayList<String>(5);
-        List<String> selectionArgs = new ArrayList<>(5);
+        List<String> selectionComponents = new ArrayList<String>(6);
+        List<String> selectionArgs = new ArrayList<>(6);
+        selectionComponents.add("(" + CalendarContract.Events.CALENDAR_ID + "= ?)");
+        selectionArgs.add(Long.toString(calendarID));
         if (template.title != null) {
             selectionComponents.add("(" + CalendarContract.Events.TITLE + "= ?)");
             selectionArgs.add(template.title);
