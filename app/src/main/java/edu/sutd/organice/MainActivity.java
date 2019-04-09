@@ -1,10 +1,6 @@
 package edu.sutd.organice;
 
 import android.Manifest;
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -18,18 +14,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import org.drinkless.td.libcore.telegram.TdApi;
-
-import java.text.ParseException;
-
 public class MainActivity extends AppCompatActivity {
 
-    public static final int TD_UPDATE_JOB_ID = 0;
 
     TextView textView;
     Button logoutButton;
-
-    private CalendarHelper calendarHelper;
 
     private TDHelper tdHelper;
     private Handler tdHandler = new Handler(new Handler.Callback() {
@@ -49,23 +38,11 @@ public class MainActivity extends AppCompatActivity {
                     break;
 
                 case TDHelper.UPDATE_MESSAGE_CODE:
-                    if (((TdApi.Object) msg.obj).getConstructor() == TdApi.UpdateNewMessage.CONSTRUCTOR) {
-                        Log.i(LOG_TAG, "received new message");
-                        TdApi.UpdateNewMessage updateNewMessage = (TdApi.UpdateNewMessage) msg.obj;
-                        TdApi.MessageContent content = updateNewMessage.message.content;
-                        if (content instanceof TdApi.MessageText) {
-                            try {
-                                ActionRequest.execute(calendarHelper, tdHelper, updateNewMessage.message);
-                            } catch (ParseException e) {
-                                Log.e(LOG_TAG, "parse error");
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
+                    // do nothing
                     break;
 
                 case TDHelper.RESULT_MESSAGE_CODE:
+                    // do nothing
                     break;
 
                 default:
@@ -104,10 +81,10 @@ public class MainActivity extends AppCompatActivity {
         Authenticator.addAccount(this, "Organice");
         SyncAdapter.syncNow(this);
 
-        calendarHelper = new CalendarHelper(this);
-        tdHelper = new TDHelper(this, tdHandler);
+        TDUpdateJobService.scheduleImmediateJob(this);
 
-        initializeTDUpdateJob();
+        tdHelper = TDHelper.getInstance(this);
+        tdHelper.setActivityHandler(tdHandler);
     }
 
     @Override
@@ -131,7 +108,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        tdHelper.close();
     }
 
     private void getCalendarPermissions() {
@@ -169,27 +145,4 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void initializeTDUpdateJob() {
-        JobScheduler jobScheduler = (JobScheduler) this.getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        if (jobScheduler == null) {
-            Log.wtf(LOG_TAG, "failed to obtain job scheduler when initializing TD update job");
-            return;
-        }
-        JobInfo updateJob = jobScheduler.getPendingJob(TD_UPDATE_JOB_ID);
-        if (updateJob == null) {
-            // job hasn't been set up yet, set up now
-            JobInfo.Builder builder = new JobInfo.Builder(
-                    TD_UPDATE_JOB_ID,
-                    new ComponentName(this.getApplicationContext(), TDUpdateJobService.class)
-            )
-                    .setPeriodic(5000)
-                    .setPersisted(true)
-                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
-            JobInfo job = builder.build();
-            jobScheduler.schedule(job);
-            Log.d(LOG_TAG, "initialized TD update job");
-        } else {
-            Log.d(LOG_TAG, "TD update job already initialized");
-        }
-    }
 }

@@ -19,13 +19,16 @@ import java.util.concurrent.locks.ReentrantLock;
 public class TDHelper {
     private static final String LOG_TAG = "TDHelper";
 
+    private static TDHelper instance = null;
+
     public static final int PHONE_NUMBER_REQUEST_MESSAGE_CODE = 0;
     public static final int LOGIN_CODE_REQUEST_MESSAGE_CODE = 1;
     public static final int UPDATE_MESSAGE_CODE = 2;
     public static final int RESULT_MESSAGE_CODE = 3;
 
     private final Context context;
-    private final Handler uiHandler;
+    private Handler updateServiceHandler;
+    private Handler activityHandler;
     private Client client;
     private final Client.ResultHandler defaultHandler = new TDHelper.DefaultHandler();
     // authorization variables
@@ -45,12 +48,26 @@ public class TDHelper {
         System.loadLibrary("tdjni");
     }
 
-    public TDHelper(Context context, Handler handler) {
+    private TDHelper(Context context) {
         this.context = context;
-        this.uiHandler = handler;
 
         // create client
         client = Client.create(new TDHelper.UpdatesHandler(), null, null);
+    }
+
+    public static TDHelper getInstance(Context context) {
+        if (instance == null) {
+            instance = new TDHelper(context.getApplicationContext());
+        }
+        return instance;
+    }
+
+    public void setUpdateServiceHandler(Handler handler) {
+        updateServiceHandler = handler;
+    }
+
+    public void setActivityHandler(Handler handler) {
+        activityHandler = handler;
     }
 
     private class DefaultHandler implements Client.ResultHandler {
@@ -59,7 +76,7 @@ public class TDHelper {
             Message message = new Message();
             message.what = RESULT_MESSAGE_CODE;
             message.obj = object;
-            uiHandler.sendMessage(message);
+            updateServiceHandler.sendMessage(message);
         }
     }
 
@@ -76,7 +93,7 @@ public class TDHelper {
                     Message message = new Message();
                     message.what = UPDATE_MESSAGE_CODE;
                     message.obj = object;
-                    uiHandler.sendMessage(message);
+                    updateServiceHandler.sendMessage(message);
 
             }
         }
@@ -136,7 +153,7 @@ public class TDHelper {
                 Log.d(LOG_TAG, "prompting UI thread for phone number");
                 Message message = new Message();
                 message.what = MainActivity.PHONE_NUMBER_REQUEST_CODE;
-                uiHandler.sendMessage(message);
+                activityHandler.sendMessage(message);
                 break;
             }
             case TdApi.AuthorizationStateWaitCode.CONSTRUCTOR: {
@@ -144,7 +161,7 @@ public class TDHelper {
                 Log.d(LOG_TAG, "prompting UI thread for login code");
                 Message message = new Message();
                 message.what = MainActivity.LOGIN_CODE_REQUEST_CODE;
-                uiHandler.sendMessage(message);
+                activityHandler.sendMessage(message);
                 break;
             }
             case TdApi.AuthorizationStateWaitPassword.CONSTRUCTOR: {
@@ -200,6 +217,7 @@ public class TDHelper {
 
     public void close() {
         client.close();
+        instance = null;
     }
 
     public void sendMessage(long chatId, String s) {
