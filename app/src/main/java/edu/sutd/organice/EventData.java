@@ -1,7 +1,9 @@
 package edu.sutd.organice;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class EventData {
     public final String title;
@@ -32,6 +34,29 @@ public class EventData {
             builder.append(venue);
         }
         return builder.toString();
+    }
+
+    public String toMessageFormat() {
+        SimpleDateFormat format = new SimpleDateFormat("DD/MM/YYYY HH:mm");
+
+        List<String> lines = new ArrayList<>(5);
+        if (title != null) {
+            lines.add("Title: " + title);
+        }
+        if (dateStart != null) {
+            lines.add("Start: " + format.format(dateStart));
+        }
+        if (dateEnd != null) {
+            lines.add("Start: " + format.format(dateEnd));
+        }
+        if (venue != null) {
+            lines.add("Venue: " + venue);
+        }
+        if (note != null) {
+            lines.add("Note: " + note);
+        }
+
+        return String.join("\n", lines);
     }
 
     @Override

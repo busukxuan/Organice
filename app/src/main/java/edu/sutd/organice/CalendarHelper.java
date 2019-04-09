@@ -198,8 +198,8 @@ public class CalendarHelper {
         selectionComponents.add("(" + CalendarContract.Events.CALENDAR_ID + "= ?)");
         selectionArgs.add(Long.toString(calendarID));
         if (template.title != null) {
-            selectionComponents.add("(" + CalendarContract.Events.TITLE + "= ?)");
-            selectionArgs.add(template.title);
+            selectionComponents.add("(" + CalendarContract.Events.TITLE + "LIKE ?)");
+            selectionArgs.add("%" + template.title + "%");
         }
         if (template.dateStart != null) {
             selectionComponents.add("(" + CalendarContract.Events.DTSTART + "= ?)");
@@ -214,12 +214,12 @@ public class CalendarHelper {
             );
         }
         if (template.venue != null) {
-            selectionComponents.add("(" + CalendarContract.Events.EVENT_LOCATION + "= ?)");
-            selectionArgs.add(template.venue);
+            selectionComponents.add("(" + CalendarContract.Events.EVENT_LOCATION + "LIKE ?)");
+            selectionArgs.add("%" + template.venue + "%");
         }
         if (template.note != null) {
-            selectionComponents.add("(" + CalendarContract.Events.DESCRIPTION + "= ?)");
-            selectionArgs.add(template.note);
+            selectionComponents.add("(" + CalendarContract.Events.DESCRIPTION + "LIKE ?)");
+            selectionArgs.add("%" + template.note + "%");
         }
 
         // query
