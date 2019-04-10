@@ -72,6 +72,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
 //                tdHelper.logout();
                 Intent intent = new Intent(MainActivity.this, EventSelectionActivity.class);
+                intent.putExtra("mode", EventSelectionActivity.SHOW_UPCOMING_EVENTS_MODE);
+//                Intent intent = new Intent(MainActivity.this, EventSearchActivity.class);
                 startActivity(intent);
             }
         });
