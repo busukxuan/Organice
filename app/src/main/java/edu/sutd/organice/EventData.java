@@ -37,7 +37,7 @@ public class EventData {
     }
 
     public String toMessageFormat() {
-        SimpleDateFormat format = new SimpleDateFormat("DD/MM/YYYY HH:mm");
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/YYYY HH:mm");
 
         List<String> lines = new ArrayList<>(5);
         if (title != null) {

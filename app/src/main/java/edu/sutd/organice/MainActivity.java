@@ -70,10 +70,11 @@ public class MainActivity extends AppCompatActivity {
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tdHelper.logout();
+//                tdHelper.logout();
+                Intent intent = new Intent(MainActivity.this, EventSelectionActivity.class);
+                startActivity(intent);
             }
         });
-
 
 
         getCalendarPermissions();
@@ -127,7 +128,8 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(
                     this,
                     new String[]{Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR},
-                    CALENDAR_PERMISSIONS_REQUEST_CODE);
+                    CALENDAR_PERMISSIONS_REQUEST_CODE
+            );
         }
     }
 
