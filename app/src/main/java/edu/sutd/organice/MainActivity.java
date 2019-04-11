@@ -101,8 +101,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // do nothing for now
                 Log.d(LOG_TAG, "preferences card clicked");
-//                Intent intent = new Intent(MainActivity.this, PreferencesActivity.class);
-//                startActivity(intent);
+                Intent intent = new Intent(MainActivity.this, PreferencesActivity.class);
+                startActivity(intent);
             }
         });
 

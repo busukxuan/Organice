@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory
+        app:title="Default chat preferences"
+        >
+        <ListPreference
+            app:defaultValue="execute"
+            app:key="new_event_message_action"
+            app:entries="@array/new_event_message_actions"
+            app:entryValues="@array/new_event_message_action_values"
+            app:title="New event message action"
+            app:summary="Action to be taken when a message asks to create a new event in the calendar"
+            />
+        <ListPreference
+            app:defaultValue="execute"
+            app:key="delete_event_message_action"
+            app:entries="@array/delete_event_message_actions"
+            app:entryValues="@array/delete_event_message_action_values"
+            app:title="Delete event message action"
+            app:summary="Action to be taken when a message asks to delete an event from the calendar"
+            />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:title="Advanced"
+        >
+        <SwitchPreference
+            app:defaultValue="false"
+            app:key="honor_stop_job"
+            app:title="Honor stop job"
+            app:summary="Close Telegram connection when update service is closed by the system. May reduce power consumption and impact calendar update latency."
+            />
+        <SwitchPreference
+            app:defaultValue="true"
+            app:key="enable_error_toast"
+            app:title="Enable error toast"
+            app:summary="Show a transient message when an error occurs"
+            />
+    </PreferenceCategory>
+</PreferenceScreen>

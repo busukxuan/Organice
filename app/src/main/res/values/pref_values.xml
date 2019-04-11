@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="new_event_message_actions">
+        <item>Add event to calendar</item>
+        <item>Notify and ask</item>
+        <item>Do nothing</item>
+    </string-array>
+    <string-array name="new_event_message_action_values">
+        <item>execute</item>
+        <item>prompt</item>
+        <item>ignore</item>
+    </string-array>
+    <string-array name="delete_event_message_actions">
+        <item>Delete event from calendar</item>
+        <item>Notify and ask</item>
+        <item>Do nothing</item>
+    </string-array>
+    <string-array name="delete_event_message_action_values">
+        <item>execute</item>
+        <item>prompt</item>
+        <item>ignore</item>
+    </string-array>
+</resources>
