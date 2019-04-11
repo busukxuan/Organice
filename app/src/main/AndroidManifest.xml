@@ -18,7 +18,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ShareEventActivity"></activity>
+        <activity android:name=".ShareEventActivity" />
         <activity android:name=".EventSearchActivity" />
         <activity
             android:name=".EventSelectionActivity"
@@ -30,7 +30,9 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <meta-data android:name="android.app.shortcuts"
+
+            <meta-data
+                android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />
         </activity>
         <activity android:name=".LoginCodeActivity" />
