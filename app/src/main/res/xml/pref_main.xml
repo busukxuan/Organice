@@ -24,15 +24,15 @@
     <PreferenceCategory
         app:title="Advanced"
         >
-        <SwitchPreference
+        <SwitchPreferenceCompat
             app:defaultValue="false"
             app:key="honor_stop_job"
             app:title="Honor stop job"
             app:summary="Close Telegram connection when update service is closed by the system. May reduce power consumption and impact calendar update latency."
             />
-        <SwitchPreference
+        <SwitchPreferenceCompat
             app:defaultValue="true"
-            app:key="enable_error_toast"
+            app:key="@string/enable_error_toast"
             app:title="Enable error toast"
             app:summary="Show a transient message when an error occurs"
             />

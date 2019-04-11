@@ -1,5 +1,7 @@
 package edu.sutd.organice;
 
+import android.content.SharedPreferences;
+
 import java.util.Date;
 
 public class NewEventRequest extends ActionRequest {
@@ -36,7 +38,7 @@ public class NewEventRequest extends ActionRequest {
     }
 
     @Override
-    public void execute(CalendarHelper calendarHelper, TDHelper tdHelper) throws IllegalStateException {
+    public void execute(SharedPreferences preferences, CalendarHelper calendarHelper, TDHelper tdHelper) throws IllegalStateException {
         // check event data validity before adding event
         if (eventData.title == null) {
             throw new IllegalStateException("eventData.title for new event must not be null");
@@ -44,8 +46,16 @@ public class NewEventRequest extends ActionRequest {
             throw new IllegalStateException("eventData.dateStart for new event must not be null");
         } else if (eventData.dateEnd == null) {
             throw new IllegalStateException("eventData.dateStart for new event must not be null");
-        } else {
-            calendarHelper.addEvent(this);
+        }
+        switch (preferences.getString("new_event_message_action", "execute")) {
+            case "execute":
+                calendarHelper.addEvent(this);
+                break;
+            case "prompt":
+                // do nothing for now
+                break;
+            case "ignore":
+                break;
         }
     }
 

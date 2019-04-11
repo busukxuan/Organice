@@ -20,4 +20,5 @@
         <item>prompt</item>
         <item>ignore</item>
     </string-array>
+    <string name="enable_error_toast">enable_error_toast</string>
 </resources>

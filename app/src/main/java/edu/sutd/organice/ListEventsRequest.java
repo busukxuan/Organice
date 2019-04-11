@@ -1,5 +1,7 @@
 package edu.sutd.organice;
 
+import android.content.SharedPreferences;
+
 public class ListEventsRequest extends ActionRequest {
 
     public final long chatId;
@@ -9,7 +11,7 @@ public class ListEventsRequest extends ActionRequest {
     }
 
     @Override
-    public void execute(CalendarHelper calendarHelper, TDHelper tdHelper) {
+    public void execute(SharedPreferences sharedPreferences, CalendarHelper calendarHelper, TDHelper tdHelper) {
         EventData[] eventData = calendarHelper.getNextEvents();
         String[] eventLines = new String[5];
         for (int i = 0; i < 5; i++) {

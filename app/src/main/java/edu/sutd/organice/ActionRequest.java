@@ -1,5 +1,6 @@
 package edu.sutd.organice;
 
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import org.drinkless.td.libcore.telegram.TdApi;
@@ -38,11 +39,11 @@ public abstract class ActionRequest {
 
     private static EventData parseEventData(String[] lines, int startLine) throws ParseException {
         // `EventData` fields are null by default
-        String title = null;
+        String title = "";
         Date start = null;
         Date end = null;
-        String venue = null;
-        String note = null;
+        String venue = "";
+        String note = "";
 
         // read data fields line by line, until closing tag "# end organice"
         int lineIndex = startLine;
@@ -80,17 +81,17 @@ public abstract class ActionRequest {
         return new EventData(title, start, end, venue, note);
     }
 
-    public abstract void execute(CalendarHelper calendarHelper, TDHelper tdHelper);
+    public abstract void execute(SharedPreferences preferences, CalendarHelper calendarHelper, TDHelper tdHelper);
 
-    public static void execute(CalendarHelper calendarHelper, TDHelper tdHelper, ActionRequest request) {
+    public static void execute(SharedPreferences preferences, CalendarHelper calendarHelper, TDHelper tdHelper, ActionRequest request) {
         Log.d(LOG_TAG, "executing request");
-        request.execute(calendarHelper, tdHelper);
+        request.execute(preferences, calendarHelper, tdHelper);
     }
 
-    public static void execute(CalendarHelper calendarHelper, TDHelper tdHelper, TdApi.Message message) throws ParseException {
+    public static void execute(SharedPreferences preferences, CalendarHelper calendarHelper, TDHelper tdHelper, TdApi.Message message) throws ParseException {
         ActionRequest request = parseMessage(message);
         if (request != null) {
-            execute(calendarHelper, tdHelper, request);
+            execute(preferences, calendarHelper, tdHelper, request);
         }
     }
 

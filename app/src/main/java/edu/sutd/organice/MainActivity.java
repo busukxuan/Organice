@@ -2,10 +2,12 @@ package edu.sutd.organice;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -51,7 +53,10 @@ public class MainActivity extends AppCompatActivity {
                     break;
 
                 case TDHelper.ERROR_MESSAGE_CODE:
-                    Toast.makeText(MainActivity.this, (String) msg.obj, Toast.LENGTH_LONG).show();
+                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                    if (preferences.getBoolean(getResources().getString(R.string.enable_error_toast), true)) {
+                        Toast.makeText(MainActivity.this, (String) msg.obj, Toast.LENGTH_LONG).show();
+                    }
                     break;
 
                 default:

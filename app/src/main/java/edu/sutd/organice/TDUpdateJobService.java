@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import org.drinkless.td.libcore.telegram.TdApi;
@@ -52,7 +53,7 @@ public class TDUpdateJobService extends JobService {
                         TdApi.MessageContent content = updateNewMessage.message.content;
                         if (content instanceof TdApi.MessageText) {
                             try {
-                                ActionRequest.execute(calendarHelper, tdHelper, updateNewMessage.message);
+                                ActionRequest.execute(preferences, calendarHelper, tdHelper, updateNewMessage.message);
                             } catch (ParseException e) {
                                 Log.e(LOG_TAG, "parse error");
                             } catch (Exception e) {
@@ -75,7 +76,7 @@ public class TDUpdateJobService extends JobService {
     @Override
     public boolean onStartJob(JobParameters params) {
         Log.i(LOG_TAG, "started TDLib update job");
-        preferences = getSharedPreferences(getResources().getString(R.string.app_name), MODE_PRIVATE);
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
         calendarHelper = new CalendarHelper(this);
         tdHelper = TDHelper.getInstance(this);
         tdHelper.setUpdateServiceHandler(tdHandler);
