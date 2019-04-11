@@ -3,10 +3,15 @@
     <string name="login_code">Login code:</string>
     <string name="login">Login</string>
     <string name="phone_number">Phone Number:</string>
-    <string name="cancel">Cancel</string>
+    <string name="cancel_login">Cancel</string>
     <string name="account_type">organice.sutd.edu</string>
     <string name="title_activity_event_selection">EventSelectionActivity</string>
     <string name="share_event_activity_shortcut_short_label">ShareEvent</string>
     <string name="share_event_activity_shortcut_long_label">Share an event to Telegram</string>
     <string name="share_event_activity_shortcut_disabled_message">*** something ***</string>
+
+    <string name="login_code_instruction">
+        A one-time login code has been sent to your Telegram account.
+        Please enter the login code to login.
+    </string>
 </resources>

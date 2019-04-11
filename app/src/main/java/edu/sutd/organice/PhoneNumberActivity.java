@@ -2,7 +2,6 @@ package edu.sutd.organice;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -32,9 +31,9 @@ public class PhoneNumberActivity extends AppCompatActivity {
         phoneNumberButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.putExtra("phoneNumber", phoneNumberEditText.getText().toString());
-                setResult(0, intent);
+                TDHelper.getInstance(PhoneNumberActivity.this).sendPhoneNumber(
+                        phoneNumberEditText.getText().toString()
+                );
                 finish();
         }});
         autofillPhoneNumber();

@@ -6,35 +6,38 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
+import android.widget.Toast;
+
+import org.drinkless.td.libcore.telegram.TdApi;
 
 public class MainActivity extends AppCompatActivity {
 
+    CardView shareEventCard;
+    CardView preferencesCard;
+    CardView logoutCard;
 
-    TextView textView;
-    Button logoutButton;
+    private Snackbar loginSnackbar;
 
     private TDHelper tdHelper;
     private Handler tdHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
-            Intent intent;
             switch (msg.what) {
 
                 case TDHelper.PHONE_NUMBER_REQUEST_MESSAGE_CODE:
-                    intent = new Intent(MainActivity.this, PhoneNumberActivity.class);
-                    startActivityForResult(intent, PHONE_NUMBER_REQUEST_CODE);
+                    loginSnackbar.show();
                     break;
 
                 case TDHelper.LOGIN_CODE_REQUEST_MESSAGE_CODE:
-                    intent = new Intent(MainActivity.this, LoginCodeActivity.class);
-                    startActivityForResult(intent, LOGIN_CODE_REQUEST_CODE);
+                    Intent intent = new Intent(MainActivity.this, LoginCodeActivity.class);
+                    startActivity(intent);
                     break;
 
                 case TDHelper.UPDATE_MESSAGE_CODE:
@@ -43,6 +46,10 @@ public class MainActivity extends AppCompatActivity {
 
                 case TDHelper.RESULT_MESSAGE_CODE:
                     // do nothing
+                    break;
+
+                case TDHelper.ERROR_MESSAGE_CODE:
+                    Toast.makeText(MainActivity.this, (String) msg.obj, Toast.LENGTH_LONG).show();
                     break;
 
                 default:
@@ -54,9 +61,6 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = "MainActivity";
 
-    public static final int PHONE_NUMBER_REQUEST_CODE = 0;
-    public static final int LOGIN_CODE_REQUEST_CODE = 1;
-
     private static final int CALENDAR_PERMISSIONS_REQUEST_CODE = 0;
 
     @Override
@@ -64,20 +68,48 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        textView = findViewById(R.id.textView);
+        loginSnackbar = Snackbar.make(
+                        findViewById(R.id.mainActivityLayout),
+                        "You are not logged in. Events received through Telegram will not be added.",
+                        Snackbar.LENGTH_INDEFINITE
+                );
+        loginSnackbar.setAction("Log In", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(MainActivity.this, PhoneNumberActivity.class);
+                    startActivity(intent);
+                }
+        });
 
-        logoutButton = findViewById(R.id.logoutButton);
-        logoutButton.setOnClickListener(new View.OnClickListener() {
+        shareEventCard = findViewById(R.id.shareEventCard);
+        shareEventCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                tdHelper.logout();
-                Intent intent = new Intent(MainActivity.this, EventSelectionActivity.class);
+                Log.d(LOG_TAG, "share event card clicked");
+                Intent intent = new Intent(MainActivity.this, ShareEventActivity.class);
                 intent.putExtra("mode", EventSelectionActivity.SHOW_UPCOMING_EVENTS_MODE);
-//                Intent intent = new Intent(MainActivity.this, EventSearchActivity.class);
                 startActivity(intent);
             }
         });
 
+
+        preferencesCard = findViewById(R.id.preferencesCard);
+        preferencesCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // do nothing for now
+                Log.d(LOG_TAG, "preferences card clicked");
+            }
+        });
+
+        logoutCard = findViewById(R.id.logoutCard);
+        logoutCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(LOG_TAG, "logout card clicked");
+                tdHelper.logout();
+            }
+        });
 
         getCalendarPermissions();
 
@@ -88,22 +120,14 @@ public class MainActivity extends AppCompatActivity {
 
         tdHelper = TDHelper.getInstance(this);
         tdHelper.setActivityHandler(tdHandler);
-    }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case PHONE_NUMBER_REQUEST_CODE:
-                String phoneNumber = data.getStringExtra("phoneNumber");
-                tdHelper.sendPhoneNumber(phoneNumber);
+        switch (tdHelper.authorizationState.getConstructor()) {
+            case TdApi.AuthorizationStateWaitPhoneNumber.CONSTRUCTOR:
+                loginSnackbar.show();
                 break;
-            case LOGIN_CODE_REQUEST_CODE:
-                String loginCode = data.getStringExtra("loginCode");
-                if(loginCode=="CANCELLED") break;
-                else tdHelper.sendLoginCode(loginCode);
-                break;
-            default:
-                Log.wtf(LOG_TAG, "unexpected request code " + Integer.toString(requestCode));
+            case TdApi.AuthorizationStateWaitCode.CONSTRUCTOR:
+                Intent intent = new Intent(MainActivity.this, LoginCodeActivity.class);
+                startActivity(intent);
                 break;
         }
     }

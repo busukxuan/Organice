@@ -25,6 +25,7 @@ public class TDHelper {
     public static final int LOGIN_CODE_REQUEST_MESSAGE_CODE = 1;
     public static final int UPDATE_MESSAGE_CODE = 2;
     public static final int RESULT_MESSAGE_CODE = 3;
+    public static final int ERROR_MESSAGE_CODE = 4;
 
     private final Context context;
     private Handler updateServiceHandler;
@@ -34,8 +35,7 @@ public class TDHelper {
     // authorization variables
     private final Lock authorizationLock = new ReentrantLock();
     private final Condition gotAuthorization = authorizationLock.newCondition();
-    private volatile boolean haveAuthorization = false;
-    private TdApi.AuthorizationState authorizationState = null;
+    public volatile TdApi.AuthorizationState authorizationState = new TdApi.AuthorizationStateWaitTdlibParameters();
 
     // TDLib client parameters
     private static final boolean USE_MESSAGE_DATABASE = true;
@@ -108,8 +108,15 @@ public class TDHelper {
                     break;
                 case TdApi.Error.CONSTRUCTOR:
                     // TDLib error
-                    Log.w(LOG_TAG, "TDLib error: " + object.toString() + "; retrying...");
-                    onAuthorizationStateUpdated(authorizationState); // repeat last action
+                    TdApi.Error error = (TdApi.Error) object;
+                    // tell UI about the error
+                    Log.w(LOG_TAG, "TDLib error " + error.toString() + "; retrying...");
+                    Message message = new Message();
+                    message.what = ERROR_MESSAGE_CODE;
+                    message.obj = "Error " + Integer.toString(error.code) + " - " + error.message;
+                    activityHandler.sendMessage(message);
+                    // retry last authorization action
+                    onAuthorizationStateUpdated(authorizationState);
                     break;
                 default:
                     Log.e(LOG_TAG, "unexpected response from TDLib: " + object.toString());
@@ -152,7 +159,7 @@ public class TDHelper {
                 // send phone number
                 Log.d(LOG_TAG, "prompting UI thread for phone number");
                 Message message = new Message();
-                message.what = MainActivity.PHONE_NUMBER_REQUEST_CODE;
+                message.what = PHONE_NUMBER_REQUEST_MESSAGE_CODE;
                 activityHandler.sendMessage(message);
                 break;
             }
@@ -160,7 +167,7 @@ public class TDHelper {
                 // send login code
                 Log.d(LOG_TAG, "prompting UI thread for login code");
                 Message message = new Message();
-                message.what = MainActivity.LOGIN_CODE_REQUEST_CODE;
+                message.what = LOGIN_CODE_REQUEST_MESSAGE_CODE;
                 activityHandler.sendMessage(message);
                 break;
             }
@@ -174,7 +181,6 @@ public class TDHelper {
             case TdApi.AuthorizationStateReady.CONSTRUCTOR:
                 // authorized
                 Log.i(LOG_TAG, "authorization ready");
-                haveAuthorization = true;
                 authorizationLock.lock();
                 try {
                     gotAuthorization.signal();
@@ -185,12 +191,10 @@ public class TDHelper {
             case TdApi.AuthorizationStateLoggingOut.CONSTRUCTOR:
                 // logged out
                 Log.i(LOG_TAG, "logging out");
-                haveAuthorization = false;
                 break;
             case TdApi.AuthorizationStateClosing.CONSTRUCTOR:
                 // closing database
                 Log.d(LOG_TAG, "closing database");
-                haveAuthorization = false;
                 break;
             case TdApi.AuthorizationStateClosed.CONSTRUCTOR:
                 // database closed
