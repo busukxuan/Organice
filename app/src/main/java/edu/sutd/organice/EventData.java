@@ -40,19 +40,19 @@ public class EventData {
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/YYYY HH:mm");
 
         List<String> lines = new ArrayList<>(5);
-        if (title != null) {
+        if (title != null && !title.isEmpty()) {
             lines.add("Title: " + title);
         }
         if (dateStart != null) {
             lines.add("Start: " + format.format(dateStart));
         }
         if (dateEnd != null) {
-            lines.add("Start: " + format.format(dateEnd));
+            lines.add("End: " + format.format(dateEnd));
         }
-        if (venue != null) {
+        if (venue != null && !venue.isEmpty()) {
             lines.add("Venue: " + venue);
         }
-        if (note != null) {
+        if (note != null && !venue.isEmpty()) {
             lines.add("Note: " + note);
         }
 

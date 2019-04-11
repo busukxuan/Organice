@@ -6,4 +6,7 @@
     <string name="cancel">Cancel</string>
     <string name="account_type">organice.sutd.edu</string>
     <string name="title_activity_event_selection">EventSelectionActivity</string>
+    <string name="share_event_activity_shortcut_short_label">ShareEvent</string>
+    <string name="share_event_activity_shortcut_long_label">Share an event to Telegram</string>
+    <string name="share_event_activity_shortcut_disabled_message">*** something ***</string>
 </resources>

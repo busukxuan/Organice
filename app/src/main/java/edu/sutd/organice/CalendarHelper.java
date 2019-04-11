@@ -185,47 +185,56 @@ public class CalendarHelper {
         }
     }
 
-    public List<EventData> getEvents(EventData template) {
-        Log.d(LOG_TAG, "retrieving event from calendar");
+    public List<EventData> getEvents(
+            String titleSubstr,
+            Date from,
+            Date to,
+            String venueSubstr,
+            String noteSubstr,
+            boolean organiceOnly
+    ) {
+        Log.d(LOG_TAG, "retrieving events from calendar");
 
         ContentResolver cr = context.getContentResolver();
 
         Uri uri = CalendarContract.Events.CONTENT_URI;
 
         // create selection based on available information from request
-        List<String> selectionComponents = new ArrayList<String>(6);
+        List<String> selectionComponents = new ArrayList<>(6);
         List<String> selectionArgs = new ArrayList<>(6);
-        selectionComponents.add("(" + CalendarContract.Events.CALENDAR_ID + "= ?)");
-        selectionArgs.add(Long.toString(calendarID));
-        if (template.title != null) {
-            selectionComponents.add("(" + CalendarContract.Events.TITLE + "LIKE ?)");
-            selectionArgs.add("%" + template.title + "%");
+        if (organiceOnly) {
+            selectionComponents.add("(" + CalendarContract.Events.CALENDAR_ID + " = ?)");
+            selectionArgs.add(Long.toString(calendarID));
         }
-        if (template.dateStart != null) {
-            selectionComponents.add("(" + CalendarContract.Events.DTSTART + "= ?)");
+        if (titleSubstr != null && !titleSubstr.isEmpty()) {
+            selectionComponents.add("(" + CalendarContract.Events.TITLE + " LIKE ?)");
+            selectionArgs.add("%" + titleSubstr + "%");
+        }
+        if (from != null) {
+            selectionComponents.add("(" + CalendarContract.Events.DTEND + " > ?)");
             selectionArgs.add(
-                    Long.toString(template.dateStart.getTime())
+                    Long.toString(from.getTime())
             );
         }
-        if (template.dateEnd != null) {
-            selectionComponents.add("(" + CalendarContract.Events.DTEND + "= ?)");
+        if (to != null) {
+            selectionComponents.add("(" + CalendarContract.Events.DTSTART + " < ?)");
             selectionArgs.add(
-                    Long.toString(template.dateEnd.getTime())
+                    Long.toString(to.getTime())
             );
         }
-        if (template.venue != null) {
-            selectionComponents.add("(" + CalendarContract.Events.EVENT_LOCATION + "LIKE ?)");
-            selectionArgs.add("%" + template.venue + "%");
+        if (venueSubstr != null && !venueSubstr.isEmpty()) {
+            selectionComponents.add("(" + CalendarContract.Events.EVENT_LOCATION + " LIKE ?)");
+            selectionArgs.add("%" + venueSubstr + "%");
         }
-        if (template.note != null) {
-            selectionComponents.add("(" + CalendarContract.Events.DESCRIPTION + "LIKE ?)");
-            selectionArgs.add("%" + template.note + "%");
+        if (noteSubstr != null && !noteSubstr.isEmpty()) {
+            selectionComponents.add("(" + CalendarContract.Events.DESCRIPTION + " LIKE ?)");
+            selectionArgs.add("%" + noteSubstr + "%");
         }
 
         // query
         Cursor cur = cr.query(
                 uri,
-                new String[]{},
+                EVENT_PROJECTION,
                 "(" + String.join(" AND ", selectionComponents) + ")",
                 selectionArgs.toArray(new String[0]),
                 null
@@ -238,8 +247,7 @@ public class CalendarHelper {
             return eventData;
         }
         if (cur.getCount() > 0) {
-            cur.moveToFirst();
-            for (; !cur.isAfterLast(); cur.moveToNext()) {
+            for (cur.moveToFirst(); !cur.isAfterLast(); cur.moveToNext()) {
                 eventData.add(new EventData(
                         cur.getString(PROJECTION_EVENT_TITLE_INDEX),
                         new Date(cur.getLong(PROJECTION_EVENT_DTSTART_INDEX)),
@@ -279,7 +287,8 @@ public class CalendarHelper {
             Date start = new Date(cur.getLong(PROJECTION_EVENT_DTSTART_INDEX));
             Date end = new Date(cur.getLong(PROJECTION_EVENT_DTEND_INDEX));
             String venue = cur.getString(PROJECTION_EVENT_LOCATION_INDEX);
-            eventData[i] = new EventData(title, start, end, venue, null);
+            String note = cur.getString(PROJECTION_EVENT_DESCRIPTION_INDEX);
+            eventData[i] = new EventData(title, start, end, venue, note);
             cur.moveToNext();
         }
 

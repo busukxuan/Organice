@@ -66,43 +66,46 @@ public class EventSelectionActivity extends AppCompatActivity {
                 events = (new CalendarHelper(this)).getNextEvents();
                 break;
             case SEARCH_EVENTS_MODE:
-                EventData template = new EventData(
-                        callingIntent.getStringExtra("eventTitle"),
-                        (Date) callingIntent.getParcelableExtra("eventDate"),
-                        (Date) callingIntent.getParcelableExtra("eventEnd"),
-                        callingIntent.getStringExtra("eventVenue"),
-                        callingIntent.getStringExtra("eventNote")
-                );
                 try {
-                    events = (EventData[]) (new CalendarHelper(this)).getEvents(template).toArray();
+                    events = (EventData[]) (new CalendarHelper(this)).getEvents(
+                            callingIntent.getStringExtra("eventTitle"),
+                            new Date(callingIntent.getLongExtra("eventStart", 0)),
+                            new Date(callingIntent.getLongExtra("eventEnd", 0)),
+                            callingIntent.getStringExtra("eventVenue"),
+                            callingIntent.getStringExtra("eventNote"),
+                            false
+                    ).toArray(new EventData[0]);
                 } catch (Exception e) {
-                    Log.v(LOG_TAG, "exeption here...");
+                    Log.v(LOG_TAG, e.toString());
                     events = new EventData[0];
                 }
+                Log.v(LOG_TAG, "found " + Integer.toString(events.length) + " events");
                 break;
         }
         eventDataRecyclerAdapter = new EventDataRecyclerAdapter(this, events);
         eventDataRecyclerView.setAdapter(eventDataRecyclerAdapter);
+
+        setResult(NO_RESULT_RESULT_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == EventSearchActivity.SUCCESS_RESULT_CODE) {
+            setResult(SUCCESS_RESULT_CODE, data);
+            finish();
+        }
     }
 
     void onItemClick(EventData eventData) {
-/*        String message = "# organice new\n" + eventData.toMessageFormat() + "\n# end organice";
-
-        Intent shareIntent = new Intent();
-        shareIntent.setAction(Intent.ACTION_SEND);
-        shareIntent.putExtra(Intent.EXTRA_TEXT, message);
-        shareIntent.setType("text/plain");
-        shareIntent.setPackage("org.telegram.messenger");
-        startActivity(shareIntent);*/
-
-        Intent returnIntent = new Intent();
-        returnIntent.putExtra("eventTitle", eventData.title);
-        returnIntent.putExtra("eventStart", eventData.dateStart);
-        returnIntent.putExtra("eventEnd", eventData.dateEnd);
-        returnIntent.putExtra("eventVenue", eventData.venue);
-        returnIntent.putExtra("eventNote", eventData.note);
-        setResult(SUCCESS_RESULT_CODE, returnIntent);
+        Intent returnData = new Intent();
+        Log.v(LOG_TAG, "putting extra eventTitle " + eventData.title);
+        returnData.putExtra("eventTitle", eventData.title);
+        returnData.putExtra("eventStart", eventData.dateStart.getTime());
+        returnData.putExtra("eventEnd", eventData.dateEnd.getTime());
+        returnData.putExtra("eventVenue", eventData.venue);
+        returnData.putExtra("eventNote", eventData.note);
+        setResult(SUCCESS_RESULT_CODE, returnData);
         finish();
-
     }
+
 }

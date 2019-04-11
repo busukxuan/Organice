@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="shareEvent"
+        android:enabled="true"
+        android:icon="@android:drawable/ic_menu_share"
+        android:shortcutShortLabel="@string/share_event_activity_shortcut_short_label"
+        android:shortcutLongLabel="@string/share_event_activity_shortcut_long_label"
+        android:shortcutDisabledMessage="@string/share_event_activity_shortcut_disabled_message">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="edu.sutd.organice"
+            android:targetClass="edu.sutd.organice.ShareEventActivity" />
+    </shortcut>
+</shortcuts>

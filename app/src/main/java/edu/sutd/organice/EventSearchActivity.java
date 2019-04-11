@@ -20,6 +20,9 @@ public class EventSearchActivity extends AppCompatActivity {
     private EditText noteEditText;
     private Button searchButton;
 
+    public static final int SUCCESS_RESULT_CODE = 0;
+    public static final int NO_RESULT_RESULT_CODE = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,7 +38,7 @@ public class EventSearchActivity extends AppCompatActivity {
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SimpleDateFormat format = new SimpleDateFormat("dd/MM/YYYY");
+                SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 
                 EventData eventData = null;
                 try {
@@ -54,25 +57,26 @@ public class EventSearchActivity extends AppCompatActivity {
                 Intent intent = new Intent(EventSearchActivity.this, EventSelectionActivity.class);
                 intent.putExtra("mode", EventSelectionActivity.SEARCH_EVENTS_MODE);
                 intent.putExtra("eventTitle", eventData.title);
-                intent.putExtra("eventStart", eventData.dateStart);
-                intent.putExtra("eventEnd", eventData.dateEnd);
+                intent.putExtra("eventStart", eventData.dateStart.getTime());
+                intent.putExtra("eventEnd", eventData.dateEnd.getTime());
                 intent.putExtra("eventVenue", eventData.venue);
                 intent.putExtra("eventNote", eventData.note);
                 startActivityForResult(intent, 0);
             }
         });
+
+        setResult(NO_RESULT_RESULT_CODE);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (resultCode) {
             case EventSelectionActivity.SUCCESS_RESULT_CODE:
-                Intent returnIntent = new Intent();
-                returnIntent.putExtra("event", data.getLongExtra("eventId", 0));
-                setResult(0, returnIntent);
+                setResult(SUCCESS_RESULT_CODE, data);
                 finish();
                 break;
             case EventSelectionActivity.NO_RESULT_RESULT_CODE:
                 break;
         }
     }
+
 }
