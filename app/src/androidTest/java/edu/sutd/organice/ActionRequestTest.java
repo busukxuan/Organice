@@ -28,7 +28,7 @@ public class ActionRequestTest {
         this.expectedException = exception;
     }
 
-    public TdApi.Message makeTextMessage(String s, long chatId) {
+    private TdApi.Message makeTextMessage(String s, long chatId) {
         TdApi.Message message = new TdApi.Message();
         message.content = new TdApi.MessageText();
         ((TdApi.MessageText) message.content).text = new TdApi.FormattedText();
