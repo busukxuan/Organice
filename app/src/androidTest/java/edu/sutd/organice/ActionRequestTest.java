@@ -16,7 +16,6 @@ import static org.junit.Assert.fail;
 
 @RunWith(Parameterized.class)
 public class ActionRequestTest {
-
     private long chatId;
     private TdApi.Message message;
     private ActionRequest expectedRequest;
@@ -49,27 +48,27 @@ public class ActionRequestTest {
     public static Collection<Object[]> parameters() {
         Object[][] parameters = new Object[][] {
                 new Object[] {  //new 0
-                            3142,
-                            "Hello there this is just a sample text, \n" +
-                                    "we are using this text for unit testing...\n" +
-                                    "# organice new\n" +
-                                    "Title: just some example title\n" +
-                                    "Note: this one has no venue!!!\n" +
-                                    "Start: 07/01/1997\n" +
-                                    "End: 31/12/1999\n" +
-                                    "# end organice\n" +
-                                    "more sample text here~~~",
-                            new NewEventRequest(
-                                    3142,
-                                    new EventData(
-                                            "just some example title",
-                                            makeDate(1997, 1, 7),
-                                            makeDate(1999, 12, 31),
-                                            null,
-                                            "this one has no venue!!!"
-                                    )
-                            ),
-                            null
+                        3142,
+                        "Hello there this is just a sample text, \n" +
+                                "we are using this text for unit testing...\n" +
+                                "# organice new\n" +
+                                "Title: just some example title\n" +
+                                "Note: this one has no venue!!!\n" +
+                                "Start: 07/01/1997\n" +
+                                "End: 31/12/1999\n" +
+                                "# end organice\n" +
+                                "more sample text here~~~",
+                        new NewEventRequest(
+                                3142,
+                                new EventData(
+                                        "just some example title",
+                                        makeDate(1997, 1, 7),
+                                        makeDate(1999, 12, 31),
+                                        "",
+                                        "this one has no venue!!!"
+                                )
+                        ),
+                        null
                 },
                 new Object[]{   //new 1
                         123,
@@ -87,7 +86,7 @@ public class ActionRequestTest {
                                         "test two title",
                                         makeDate(1997, 1, 7),
                                         makeDate(1999, 12, 31),
-                                        null,
+                                        "",
                                         "no #end statement"
                                 )
                         ),
@@ -103,21 +102,21 @@ public class ActionRequestTest {
                                 "End: 31/12/1999\n" +
                                 "# end organice\n" +
                                 "more sample text here~~~",
-                                new NewEventRequest(
-                                        69,
-                                        new EventData(
-                                                null, //test three
-                                                makeDate(1997, 1, 7),
-                                                makeDate(1999, 12, 31),
-                                                null,
-                                                "no title"
-                                        )
-                                ),
+                        new NewEventRequest(
+                                69,
+                                new EventData(
+                                        "", //test three
+                                        makeDate(1997, 1, 7),
+                                        makeDate(1999, 12, 31),
+                                        "",
+                                        "no title"
+                                )
+                        ),
                         null
                 },
                 new Object[] {  //new 3
                         12345,
-                                "# organice new\n" +
+                        "# organice new\n" +
                                 "Title: just some example title\n" +
                                 "Note: purely the creation of new event\n" +
                                 "Start: 07/01/1997\n" +
@@ -129,7 +128,7 @@ public class ActionRequestTest {
                                         "just some example title",
                                         makeDate(1997, 1, 7),
                                         makeDate(1999, 12, 31),
-                                        null,
+                                        "",
                                         "purely the creation of new event"
                                 )
                         ),
@@ -153,7 +152,7 @@ public class ActionRequestTest {
                                         "just some example title",
                                         makeDate(1997, 1, 7),
                                         makeDate(1999, 12, 31),
-                                        null,
+                                        "",
                                         "this one has no note!!!"
                                 )
                         ),
@@ -176,7 +175,7 @@ public class ActionRequestTest {
                                         "just some example title",
                                         makeDate(1997, 1, 7),
                                         makeDate(1999, 12, 31),
-                                        null,
+                                        "",
                                         "this one has note called extra!!!"
                                 )
                         ),
@@ -199,7 +198,7 @@ public class ActionRequestTest {
                                         "just some example title",
                                         makeDate(1997, 1, 7),
                                         makeDate(1999, 12, 31),
-                                        null,
+                                        "",
                                         "this one has no start!!!"
                                 )
                         ),
@@ -222,7 +221,7 @@ public class ActionRequestTest {
                                         "just some example title",
                                         makeDate(1997, 1, 7),
                                         makeDate(1999, 12, 31),
-                                        null,
+                                        "",
                                         "this one has no venue!!!"
                                 )
                         ),
@@ -242,10 +241,10 @@ public class ActionRequestTest {
                         new DeleteEventRequest(
                                 3142,
                                 new EventData(
-                                        null,
+                                        "",
                                         makeDate(1997, 1, 7),
                                         makeDate(1999, 12, 31),
-                                        null,
+                                        "",
                                         "this one has no venue!!!"
                                 )
                         ),
@@ -269,7 +268,7 @@ public class ActionRequestTest {
                                         "just some example title",
                                         makeDate(1997, 1, 7),
                                         makeDate(1999, 12, 31),
-                                        null,
+                                        "",
                                         "this one has no note!!!"
                                 )
                         ),
@@ -293,7 +292,7 @@ public class ActionRequestTest {
                                         "just some example title",
                                         makeDate(1997, 1, 7),
                                         makeDate(1999, 12, 31),
-                                        null,
+                                        "",
                                         "this one has no note as extra!!!"
                                 )
                         ),
@@ -318,7 +317,7 @@ public class ActionRequestTest {
     }
 
     @Test
-    public void parseMessage() throws ParseException {
+    public void parseMessage() {
         try {
             ActionRequest request = ActionRequest.parseMessage(message);
             assertEquals(request, expectedRequest);

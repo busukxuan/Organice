@@ -92,7 +92,7 @@ public class CalendarHelper {
         cur.close();
     }
 
-    public void addEvent(NewEventRequest request) {
+    public Uri addEvent(NewEventRequest request) {
         Log.d(LOG_TAG, "adding new event");
         ContentResolver cr = context.getContentResolver();
 
@@ -106,14 +106,20 @@ public class CalendarHelper {
         values.put(CalendarContract.Events.DESCRIPTION, request.eventData.note);
         values.put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().getID());
 
+        Uri uri = null;
         try {
-            cr.insert(CalendarContract.Events.CONTENT_URI, values);
-            Log.i(LOG_TAG, "successfully added new event");
+            uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
+            if (uri != null) {
+                Log.i(LOG_TAG, "successfully added new event");
+            } else {
+                Log.e(LOG_TAG, "failed to create new event");
+            }
         } catch (SecurityException e) {
             Log.e(LOG_TAG, "failed to create new event: permission denied");
         } catch (Exception e) {
             throw e;
         }
+        return uri;
     }
 
     public void deleteEvent(DeleteEventRequest request) {
@@ -126,40 +132,44 @@ public class CalendarHelper {
         Uri uri = CalendarContract.Events.CONTENT_URI;
 
         // create selection based on available information from request
-        List<String> selectionComponents = new ArrayList<String>(6);
+        List<String> selectionComponents = new ArrayList<>(6);
         List<String> selectionArgs = new ArrayList<>(6);
-        selectionComponents.add("(" + CalendarContract.Events.CALENDAR_ID + "= ?)");
+        selectionComponents.add("(" + CalendarContract.Events.CALENDAR_ID + " = ?)");
         selectionArgs.add(Long.toString(calendarID));
         if (eventData.title != null) {
-            selectionComponents.add("(" + CalendarContract.Events.TITLE + "= ?)");
+            selectionComponents.add("(" + CalendarContract.Events.TITLE + " = ?)");
             selectionArgs.add(eventData.title);
         }
         if (eventData.dateStart != null) {
-            selectionComponents.add("(" + CalendarContract.Events.DTSTART + "= ?)");
+            selectionComponents.add("(" + CalendarContract.Events.DTSTART + " = ?)");
             selectionArgs.add(
                     Long.toString(eventData.dateStart.getTime())
             );
         }
         if (eventData.dateEnd != null) {
-            selectionComponents.add("(" + CalendarContract.Events.DTEND + "= ?)");
+            selectionComponents.add("(" + CalendarContract.Events.DTEND + " = ?)");
             selectionArgs.add(
                     Long.toString(eventData.dateEnd.getTime())
             );
         }
         if (eventData.venue != null) {
-            selectionComponents.add("(" + CalendarContract.Events.EVENT_LOCATION + "= ?)");
+            selectionComponents.add("(" + CalendarContract.Events.EVENT_LOCATION + " = ?)");
             selectionArgs.add(eventData.venue);
         }
         if (eventData.note != null) {
-            selectionComponents.add("(" + CalendarContract.Events.DESCRIPTION + "= ?)");
+            selectionComponents.add("(" + CalendarContract.Events.DESCRIPTION + " = ?)");
             selectionArgs.add(eventData.note);
         }
 
+        String selection = "(" + String.join(" AND ", selectionComponents) + ")";
+        String selectionArgsPrint = String.join(", ", selectionArgs);
+
+        Log.v(LOG_TAG, selection + " " + selectionArgsPrint);
         // get number of matching events
         Cursor cur = cr.query(
                 uri,
                 new String[]{},
-                "(" + String.join(" AND ", selectionComponents) + ")",
+                selection,
                 selectionArgs.toArray(new String[0]),
                 null
         );
@@ -211,13 +221,13 @@ public class CalendarHelper {
             selectionArgs.add("%" + titleSubstr + "%");
         }
         if (from != null) {
-            selectionComponents.add("(" + CalendarContract.Events.DTEND + " > ?)");
+            selectionComponents.add("(" + CalendarContract.Events.DTEND + " >= ?)");
             selectionArgs.add(
                     Long.toString(from.getTime())
             );
         }
         if (to != null) {
-            selectionComponents.add("(" + CalendarContract.Events.DTSTART + " < ?)");
+            selectionComponents.add("(" + CalendarContract.Events.DTSTART + " <= ?)");
             selectionArgs.add(
                     Long.toString(to.getTime())
             );
