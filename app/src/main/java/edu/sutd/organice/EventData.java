@@ -5,12 +5,23 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Represents the information associated with an event.
+ */
 public class EventData {
     public final String title;
     public final Date dateStart, dateEnd;
     public final String venue;
     public final String note;
 
+    /**
+     * Construct an {@link EventData} object with the given title, start time, end time, venue, and note.
+     * @param title The title of the event
+     * @param dateStart The starting date and time of the event
+     * @param dateEnd The ending date and time of the event
+     * @param venue The venue of the event
+     * @param note Extra notes regarding the event
+     */
     EventData(String title, Date dateStart, Date dateEnd, String venue, String note) {
         this.title = title;
         this.dateStart = dateStart;
@@ -19,6 +30,10 @@ public class EventData {
         this.note = note;
     }
 
+    /**
+     * Return a single-line string containing a short description of this event.
+     * @return a single-line string containing a short description of this event
+     */
     public String toTextLine() {
         SimpleDateFormat format = new SimpleDateFormat("d/M H:mm");
 
@@ -36,6 +51,10 @@ public class EventData {
         return builder.toString();
     }
 
+    /**
+     * Return a block of event data formatted text (the same format as action request messages) specifying this event.
+     * @return a block of event data formatted text (the same format as action request messages) specifying this event
+     */
     public String toMessageFormat() {
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/YYYY HH:mm");
 

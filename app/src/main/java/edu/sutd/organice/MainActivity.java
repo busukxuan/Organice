@@ -21,14 +21,21 @@ import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+/**
+ * The main {@link android.app.Activity Activity} / entry point to the app. Presents a few actions
+ * that the user can perform with the app, and a {@link Snackbar Snackbar} when the user is not logged in.
+ */
 public class MainActivity extends AppCompatActivity {
 
+    // views
     CardView shareEventCard;
     CardView preferencesCard;
     CardView logoutCard;
 
+    // snackbar
     private Snackbar loginSnackbar;
 
+    // TDHelper instance
     private TDHelper tdHelper;
     private Handler tdHandler = new Handler(new Handler.Callback() {
         @Override
@@ -68,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = "MainActivity";
 
+    // permission request code
     private static final int CALENDAR_PERMISSIONS_REQUEST_CODE = 0;
 
     @Override
@@ -75,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // initialize snackbar
         loginSnackbar = Snackbar.make(
                         findViewById(R.id.mainActivityLayout),
                         "You are not logged in. Events received through Telegram will not be added.",
@@ -88,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
                 }
         });
 
+        // initialize share event card
         shareEventCard = findViewById(R.id.shareEventCard);
         shareEventCard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
+        // initialize preferences card
         preferencesCard = findViewById(R.id.preferencesCard);
         preferencesCard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // initialize login / logout card
         logoutCard = findViewById(R.id.logoutCard);
         logoutCard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,21 +131,28 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // ensure the app has calendar permissions
         getCalendarPermissions();
 
+        // ensure a calendar for the app exists
         Authenticator.addAccount(this, "Organice");
         SyncAdapter.syncNow(this);
 
+        // start a background job service to keep TDLib running
         TDUpdateJobService.scheduleImmediateJob(this);
 
+        // get TDHelper instance
         tdHelper = TDHelper.getInstance(this);
         tdHelper.setActivityHandler(tdHandler);
 
+        // initialize the activity according to TDHelper's current authorization state
         switch (tdHelper.authorizationState.getConstructor()) {
             case TdApi.AuthorizationStateWaitPhoneNumber.CONSTRUCTOR:
+                // TDLib ready to receive login phone number, show login snackbar
                 loginSnackbar.show();
                 break;
             case TdApi.AuthorizationStateWaitCode.CONSTRUCTOR:
+                // TDLib waiting for login code, start `LoginCodeActivity`
                 Intent intent = new Intent(MainActivity.this, LoginCodeActivity.class);
                 startActivity(intent);
                 break;
@@ -149,17 +167,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void getCalendarPermissions() {
         Log.d(LOG_TAG, "checking for calendar permissions");
+        int readPermissionState = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CALENDAR);
+        int writePermissionState = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_CALENDAR);
         if (
-                ContextCompat.checkSelfPermission(
-                        this,
-                        Manifest.permission.READ_CALENDAR
-                ) != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(
-                        this,
-                        Manifest.permission.WRITE_CALENDAR
-                ) != PackageManager.PERMISSION_GRANTED
+                readPermissionState != PackageManager.PERMISSION_GRANTED ||
+                writePermissionState != PackageManager.PERMISSION_GRANTED
         ) {
-            // calendar permissions not granted
+            // calendar permissions not granted, request now
             Log.d(LOG_TAG, "requesting calendar permissions");
             ActivityCompat.requestPermissions(
                     this,

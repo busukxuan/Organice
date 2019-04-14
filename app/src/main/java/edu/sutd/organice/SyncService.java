@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
+/**
+ * A boilerplate {@link Service Service} for Android to start the {@link SyncAdapter}.
+ */
 public class SyncService extends Service {
     private static final String LOG_TAG = "SyncService";
 

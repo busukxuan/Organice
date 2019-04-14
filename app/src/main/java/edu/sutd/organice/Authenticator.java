@@ -10,6 +10,11 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 
+/**
+ * This class is mostly a stub authenticator used to allow the app to create an account to access
+ * Android's calendar provider. It also provides a helper method for creating / ensuring
+ * the existence of the account used by the app.
+ */
 public class Authenticator extends AbstractAccountAuthenticator {
 
     private static final String LOG_TAG = "Authenticator";
@@ -77,6 +82,11 @@ public class Authenticator extends AbstractAccountAuthenticator {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Create / ensure the existence of the account used by the app.
+     * @param context Context used for creating the account.
+     * @param name Name of the account.
+     */
     public static void addAccount(Context context, String name) {
         Resources resources = context.getResources();
         final String ACCOUNT_TYPE = resources.getString(R.string.account_type);

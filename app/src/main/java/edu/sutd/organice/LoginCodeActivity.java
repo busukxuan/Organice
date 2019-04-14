@@ -8,10 +8,15 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+/**
+ * An {@link android.app.Activity Activity} in which users can enter their login code as part of the
+ * login procedure of TDLib.
+ */
 public class LoginCodeActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = "LoginCodeActivity";
 
+    // views
     EditText loginCodeEditText;
     Button loginCodeButton;
     Button cancelCodeButton;
@@ -29,6 +34,7 @@ public class LoginCodeActivity extends AppCompatActivity {
         loginCodeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // set submit to true and finish activity on click
                 submit = true;
                 finish();
             }
@@ -38,6 +44,7 @@ public class LoginCodeActivity extends AppCompatActivity {
         cancelCodeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // finish activity on click
                 finish();
             }
         });
@@ -48,11 +55,13 @@ public class LoginCodeActivity extends AppCompatActivity {
     protected void onDestroy() {
 
         if (submit) {
+            // `submit` is true, submit login code
             Log.i(LOG_TAG, "login code received");
             TDHelper.getInstance(this).sendLoginCode(
                     loginCodeEditText.getText().toString()
             );
         } else {
+            // `submit` is false, cancel login
             Log.i(LOG_TAG, "login cancelled");
             TDHelper.getInstance(this).logout();
         }

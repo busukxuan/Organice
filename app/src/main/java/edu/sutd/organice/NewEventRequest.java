@@ -4,6 +4,10 @@ import android.content.SharedPreferences;
 
 import java.util.Date;
 
+/**
+ * This class represents a request for the app to add a new event to its calendar,
+ * parsed from input in the form of Telegram messages.
+ */
 public class NewEventRequest extends ActionRequest {
     final long chatId;
     final EventData eventData;
@@ -37,6 +41,13 @@ public class NewEventRequest extends ActionRequest {
         return eventData.note;
     }
 
+    /**
+     * Add a new event as specified by this object.
+     * @param preferences User preferences to inform the execution of this request.
+     * @param calendarHelper Helper object for accessing the phone calendar.
+     * @param tdHelper Helper object for sending messages, used by {@link ListEventsRequest} objects.
+     * @throws IllegalStateException The {@link EventData} object provided is missing a title, start time or end time.
+     */
     @Override
     public void execute(SharedPreferences preferences, CalendarHelper calendarHelper, TDHelper tdHelper) throws IllegalStateException {
         // check event data validity before adding event
@@ -47,6 +58,7 @@ public class NewEventRequest extends ActionRequest {
         } else if (eventData.dateEnd == null) {
             throw new IllegalStateException("eventData.dateStart for new event must not be null");
         }
+        // execute according to user preference
         switch (preferences.getString("new_event_message_action", "execute")) {
             case "execute":
                 calendarHelper.addEvent(this);

@@ -13,8 +13,19 @@ import java.text.SimpleDateFormat;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+/**
+ * An {@link android.app.Activity Activity} showing a search form to search for events.
+ * <p>
+ *     This {@link android.app.Activity Activity} starts an {@link EventSelectionActivity}.
+ *     If that activity yields result, this activity yields the same result. If that activity yields
+ *     no result, this activity continues for users to modify / refine their search criteria. If
+ *     this activity is exited before a result is yielded by the {@link EventSelectionActivity},
+ *     then this activity returns no result.
+ * </p>
+ */
 public class EventSearchActivity extends AppCompatActivity {
 
+    // views
     private EditText titleEditText;
     private EditText startEditText;
     private EditText endEditText;
@@ -22,8 +33,9 @@ public class EventSearchActivity extends AppCompatActivity {
     private EditText noteEditText;
     private Button searchButton;
 
-    public static final int SUCCESS_RESULT_CODE = 0;
-    public static final int NO_RESULT_RESULT_CODE = 1;
+    // result codes
+    public static final int SUCCESS_RESULT_CODE = 0;    // this activity has successfully yielded a result
+    public static final int NO_RESULT_RESULT_CODE = 1;  // no result was yielded
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +52,7 @@ public class EventSearchActivity extends AppCompatActivity {
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // start EventSelectionActivity when search button is pressed
                 SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 
                 EventData eventData = null;
@@ -67,16 +80,19 @@ public class EventSearchActivity extends AppCompatActivity {
             }
         });
 
+        // set default result code
         setResult(NO_RESULT_RESULT_CODE);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (resultCode) {
             case EventSelectionActivity.SUCCESS_RESULT_CODE:
+                // EventSelectionActivity yielded a result, finish and pass it back to calling activity
                 setResult(SUCCESS_RESULT_CODE, data);
                 finish();
                 break;
             case EventSelectionActivity.NO_RESULT_RESULT_CODE:
+                // EventSelectionActivity yielded no result, do nothing
                 break;
         }
     }

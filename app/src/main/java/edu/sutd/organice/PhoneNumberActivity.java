@@ -15,10 +15,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+/**
+ * An {@link android.app.Activity Activity} in which users can enter their phone number as part of
+ * the login procedure of TDLib.
+ */
 public class PhoneNumberActivity extends AppCompatActivity {
-    private static final int READ_PHONE_STATE_PERMISSION_REQUEST_CODE = 1;
+
     private static final String LOG_TAG = "PhoneNumberActivity";
 
+    // permission request codes
+    private static final int READ_PHONE_STATE_PERMISSION_REQUEST_CODE = 0;
+
+    // views
     EditText phoneNumberEditText;
     Button phoneNumberButton;
 
@@ -32,6 +40,7 @@ public class PhoneNumberActivity extends AppCompatActivity {
         phoneNumberButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // send phone number and finish activity on click
                 TDHelper.getInstance(PhoneNumberActivity.this).sendPhoneNumber(
                         phoneNumberEditText.getText().toString()
                 );

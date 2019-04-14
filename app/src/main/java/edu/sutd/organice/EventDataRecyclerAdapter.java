@@ -9,6 +9,9 @@ import java.text.SimpleDateFormat;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+/**
+ * An {@link RecyclerView.Adapter} class for a {@link RecyclerView} that lists events.
+ */
 public class EventDataRecyclerAdapter extends RecyclerView.Adapter<EventDataRecyclerAdapter.EventDataViewHolder> {
 
     private static final String LOG_TAG = "EventDataRecyclerAdapter";
@@ -16,6 +19,9 @@ public class EventDataRecyclerAdapter extends RecyclerView.Adapter<EventDataRecy
     private EventData[] eventData;
     private EventSelectionActivity activity;
 
+    /**
+     * A {@link RecyclerView.ViewHolder} subclass for a {@link RecyclerView} that lists events.
+     */
     public static class EventDataViewHolder extends RecyclerView.ViewHolder {
         public View itemView;
         private TextView titleText;
@@ -26,6 +32,11 @@ public class EventDataRecyclerAdapter extends RecyclerView.Adapter<EventDataRecy
 
         public EventData eventData;
 
+        /**
+         * Construct the {@link EventDataViewHolder} holding the given view shown by the given {@link EventSelectionActivity}.
+         * @param view The view this holder holds
+         * @param activity The event selection activity showing the {@link RecyclerView}
+         */
         public EventDataViewHolder(
                 View view,
                 final EventSelectionActivity activity
@@ -63,6 +74,11 @@ public class EventDataRecyclerAdapter extends RecyclerView.Adapter<EventDataRecy
         }
     }
 
+    /**
+     * Construct the {@link EventDataRecyclerAdapter} for the given activity with the given event data.
+     * @param activity The event selection activity containing the {@link RecyclerView}
+     * @param data An array of {@link EventData} objects containing the data to be displayed
+     */
     public EventDataRecyclerAdapter(EventSelectionActivity activity, EventData[] data) {
         this.activity = activity;
         eventData = data;

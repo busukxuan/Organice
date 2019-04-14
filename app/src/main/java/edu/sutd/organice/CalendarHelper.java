@@ -15,6 +15,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
+/**
+ * This is a helper class for accessing Android's calendar provider.
+ */
 public class CalendarHelper {
 
     private static String LOG_TAG = "CalendarHelper";
@@ -39,17 +42,25 @@ public class CalendarHelper {
     private static final int PROJECTION_EVENT_LOCATION_INDEX = 4;
     private static final int PROJECTION_EVENT_DESCRIPTION_INDEX = 5;
 
+    /**
+     * Construct a @{link CalendarHelper} object using the given context.
+     * @param c The context used to construct the object.
+     */
     CalendarHelper(Context c) {
         context = c;
         resources = c.getResources();
         initializeCalendarID();
     }
 
+    /**
+     * Set the @{link calendarID} field to the ID of the app's calendar in the calendar table of
+     * Android's calendar provider. This is called as part of the constructor.
+     */
     private void initializeCalendarID() {
-        // get calendar ID
         Log.d(LOG_TAG, "getting calendar ID");
         Cursor cur;
         ContentResolver cr = context.getContentResolver();
+        // construct query
         Uri uri = CalendarContract.Calendars.CONTENT_URI;
         String selection = "((" + CalendarContract.Calendars.ACCOUNT_TYPE + " = ?) AND ("
                 + CalendarContract.Calendars.ACCOUNT_NAME + " = ?))";
@@ -65,6 +76,7 @@ public class CalendarHelper {
         final int PROJECTION_CALENDAR_ID_INDEX = 0;
         final int PROJECTION_CALENDAR_NAME_INDEX = 1;
         final int PROJECTION_CALENDAR_ACCOUNT_TYPE_INDEX = 2;
+        // query calendar provider
         try {
             cur = cr.query(uri, calendarProjection, selection, selectionArgs, null);
         } catch (SecurityException e) {
@@ -73,14 +85,15 @@ public class CalendarHelper {
         }
 
         if (cur == null) {
-            Log.e(LOG_TAG, "unable to obtain calendar ID: no local calendar found (null)");
+            Log.e(LOG_TAG, "unable to obtain calendar ID: query failed");
             return;
         }
+        // read cursor and obtain calendar ID
         int count = cur.getCount();
-        if (count < 1) {
+        if (count == 0) {
             Log.e(LOG_TAG, "unable to obtain calendar ID: no local calendar found");
         } else {
-            cur.moveToNext();
+            cur.moveToFirst();
             String name = cur.getString(PROJECTION_CALENDAR_NAME_INDEX);
             if (count > 1) {
                 Log.w(LOG_TAG, "found multiple calendars, arbitrarily using \"" + name + "\"");
@@ -92,6 +105,11 @@ public class CalendarHelper {
         cur.close();
     }
 
+    /**
+     * Add a new event to the app's calendar.
+     * @param request A {@link NewEventRequest} object representing the information of the event to be added.
+     * @return The content URI that identifies the event that is added to the calendar, or null if operation failed.
+     */
     public Uri addEvent(NewEventRequest request) {
         Log.d(LOG_TAG, "adding new event");
         ContentResolver cr = context.getContentResolver();
@@ -106,6 +124,7 @@ public class CalendarHelper {
         values.put(CalendarContract.Events.DESCRIPTION, request.eventData.note);
         values.put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().getID());
 
+        // insert value into the event table
         Uri uri = null;
         try {
             uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
@@ -122,6 +141,10 @@ public class CalendarHelper {
         return uri;
     }
 
+    /**
+     * Delete an event from the app's calendar.
+     * @param request A {@link DeleteEventRequest} object representing the information of the event to be deleted.
+     */
     public void deleteEvent(DeleteEventRequest request) {
         Log.d(LOG_TAG, "deleting event");
 
@@ -195,6 +218,16 @@ public class CalendarHelper {
         }
     }
 
+    /**
+     * Get a list of events matching the given criteria.
+     * @param titleSubstr Titles of events returned must contain this substring.
+     * @param from Events returned must end at or after this time.
+     * @param to Events returned must start at or before this time.
+     * @param venueSubstr Venues of events returned must contain this substring.
+     * @param noteSubstr Notes of events returned must contain this substring.
+     * @param organiceOnly Whether only events from this app's calendar should be returned.
+     * @return A {@link List} of {@link EventData} objects representing all matching events found.
+     */
     public List<EventData> getEvents(
             String titleSubstr,
             Date from,
@@ -250,8 +283,8 @@ public class CalendarHelper {
                 null
         );
 
-        // get all the rows as EventDate
-        List<EventData> eventData = new ArrayList<EventData>();
+        // get all the rows as EventData
+        List<EventData> eventData = new ArrayList<>();
         if (cur == null) {
             Log.d(LOG_TAG, "got null cursor");
             return eventData;
@@ -271,6 +304,10 @@ public class CalendarHelper {
         return eventData;
     }
 
+    /**
+     * Get the next 5 events (sorted by start time) from the phone calendar.
+     * @return An array of {@link EventData} representing the next 5 events.
+     */
     public EventData[] getNextEvents() {
         ContentResolver cr = context.getContentResolver();
 
@@ -288,7 +325,8 @@ public class CalendarHelper {
                 CalendarContract.Events.DTSTART + " ASC"
         );
 
-        cur.moveToNext();
+        // get the 5 events
+        cur.moveToFirst();
 
         EventData[] eventData = new EventData[5];
 

@@ -16,6 +16,10 @@ import android.os.RemoteException;
 import android.provider.CalendarContract;
 import android.util.Log;
 
+/**
+ * A SyncAdapter which sole purpose is to ensure that a calendar
+ * exists for use by this app.
+ */
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
     private static final String LOG_TAG = "SyncAdapter";
@@ -23,6 +27,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     ContentResolver contentResolver;
     private Resources resources;
 
+    // projection for using the calendar table in Android's calendar provider
     private static final String[] CALENDAR_PROJECTION = new String[] {
             CalendarContract.Calendars._ID,
             CalendarContract.Calendars.ACCOUNT_NAME,
@@ -57,6 +62,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     ) {
         result.clear();
 
+        // construct query
         Uri uri = CalendarContract.Calendars.CONTENT_URI.buildUpon()
                 .appendQueryParameter(CalendarContract.CALLER_IS_SYNCADAPTER, "true")
                 .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_NAME, resources.getString(R.string.app_name))
@@ -67,17 +73,18 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 + CalendarContract.Calendars.ACCOUNT_TYPE + " = ?))";
         String[] selectionArgs = new String[]{resources.getString(R.string.app_name), "1", resources.getString(R.string.account_type)};
 
+        // query the calendar table
         Cursor cur = null;
         try {
             cur = provider.query(uri, CALENDAR_PROJECTION, selection, selectionArgs, null);
         } catch (RemoteException e) {
-            Log.e(LOG_TAG, "remote exception in content provider client when querying calendars");
+            Log.e(LOG_TAG, "remote exception in content provider client when querying calendar table");
             e.printStackTrace();
             return;
         }
 
         if (cur == null) {
-            Log.e(LOG_TAG, "unexpected null cursor");
+            Log.e(LOG_TAG, "calendar table query failed");
             return;
         }
 
@@ -100,7 +107,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                     Log.e(LOG_TAG, "remote exception in content provider client when inserting calendar");
                     return;
                 }
-                Log.i(LOG_TAG, "creating Organice calendar");
+                Log.i(LOG_TAG, "created Organice calendar");
                 break;
             case 1:
                 // calendar already created, do nothing
@@ -122,9 +129,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         return color;
     }
 
+    /**
+     * Request an immediate sync using the given context.
+     * @param context A {@link Context Context} with which the account to be synced can be obtained.
+     */
     public static void syncNow(Context context) {
         Resources resources = context.getResources();
-        final String AUTHORITY = CalendarContract.AUTHORITY;
 
         AccountManager accountManager = AccountManager.get(context);
         Account account = accountManager.getAccountsByType(resources.getString(R.string.account_type))[0];
@@ -132,6 +142,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         Bundle settingsBundle = new Bundle();
         settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
         settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-        ContentResolver.requestSync(account, AUTHORITY, settingsBundle);
+        ContentResolver.requestSync(account, CalendarContract.AUTHORITY, settingsBundle);
     }
 }
