@@ -55,17 +55,20 @@ public class EventSearchActivity extends AppCompatActivity {
                 // start EventSelectionActivity when search button is pressed
                 SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 
+                String startString = startEditText.getText().toString();
+                String endString = endEditText.getText().toString();
+
                 EventData eventData = null;
                 try {
                     eventData = new EventData(
                             titleEditText.getText().toString(),
-                            format.parse(startEditText.getText().toString()),
-                            format.parse(endEditText.getText().toString()),
+                            startString.trim().isEmpty()? null : format.parse(startString),
+                            endString.trim().isEmpty()? null : format.parse(endString),
                             venueEditText.getText().toString(),
                             noteEditText.getText().toString()
                     );
                 } catch (ParseException e) {
-                    Snackbar.make(searchButton, "invalid date format", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(searchButton, "Invalid date format", Snackbar.LENGTH_LONG).show();
                     return;
                 }
 
