@@ -51,12 +51,12 @@ public class NewEventRequest extends ActionRequest {
     @Override
     public void execute(SharedPreferences preferences, CalendarHelper calendarHelper, TDHelper tdHelper) throws IllegalStateException {
         // check event data validity before adding event
-        if (eventData.title == null) {
-            throw new IllegalStateException("eventData.title for new event must not be null");
+        if (eventData.title == null || eventData.title.isEmpty()) {
+            throw new IllegalStateException("title is required");
         } else if (eventData.dateStart == null) {
-            throw new IllegalStateException("eventData.dateStart for new event must not be null");
+            throw new IllegalStateException("starting date / time is required");
         } else if (eventData.dateEnd == null) {
-            throw new IllegalStateException("eventData.dateStart for new event must not be null");
+            throw new IllegalStateException("ending date / time is required");
         }
         // execute according to user preference
         switch (preferences.getString("new_event_message_action", "execute")) {

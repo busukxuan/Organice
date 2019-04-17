@@ -14,8 +14,6 @@ import android.util.Log;
 
 import org.drinkless.td.libcore.telegram.TdApi;
 
-import java.text.ParseException;
-
 /**
  * A {@link JobService JobService} for keeping the app's process alive when it is not in the
  * foreground, so that new messages can be received as soon as they are available.
@@ -70,10 +68,10 @@ public class TDUpdateJobService extends JobService {
                         if (content instanceof TdApi.MessageText) {
                             try {
                                 ActionRequest.execute(preferences, calendarHelper, tdHelper, updateNewMessage.message);
-                            } catch (ParseException e) {
-                                Log.e(LOG_TAG, "parse error");
                             } catch (Exception e) {
-                                e.printStackTrace();
+                                tdHelper.sendMessage(
+                                        updateNewMessage.message.chatId,
+                                        "Organice error - " + e.getMessage());
                             }
                         }
                     }

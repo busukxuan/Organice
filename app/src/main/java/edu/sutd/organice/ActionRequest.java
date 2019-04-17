@@ -83,7 +83,10 @@ public abstract class ActionRequest {
             // get the event data field name, i.e. everything before the first colon
             int colonIndex = line.indexOf(":");
             if (colonIndex < 0) {
-                throw new ParseException("no colon in line", -1);
+                throw new ParseException(
+                        "No colon in line " + Integer.toString(lineIndex+1) + " \"" + line + "\"",
+                        -1
+                );
             }
             String field = line.substring(0, colonIndex).trim();
             String data = line.substring(colonIndex+1).trim();
@@ -105,7 +108,7 @@ public abstract class ActionRequest {
                     note = data;
                     break;
                 default:
-                    throw new ParseException("unexpected field name: \"" + field + "\"", -1);
+                    throw new ParseException("Unexpected field name: \"" + field + "\"", -1);
             }
         }
         return new EventData(title, start, end, venue, note);
