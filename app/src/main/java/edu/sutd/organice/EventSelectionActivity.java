@@ -84,7 +84,7 @@ public class EventSelectionActivity extends AppCompatActivity {
         switch (callingIntent.getIntExtra("mode", 0)) {
             case SHOW_UPCOMING_EVENTS_MODE:
                 // "show upcoming events" mode, get the next 5 events
-                events = (new CalendarHelper(this)).getNextEvents();
+                events = (new CalendarHelper(this)).getNextEvents(false).toArray(new EventData[0]);
                 break;
             case SEARCH_EVENTS_MODE:
                 // "search events" mode, search for events with the given criteria

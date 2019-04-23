@@ -145,7 +145,7 @@ public class CalendarHelper {
      * Delete an event from the app's calendar.
      * @param request A {@link DeleteEventRequest} object representing the information of the event to be deleted.
      */
-    public void deleteEvent(DeleteEventRequest request) {
+    public void deleteEvent(DeleteEventRequest request) throws IllegalStateException {
         Log.d(LOG_TAG, "deleting event");
 
         EventData eventData = request.eventData;
@@ -211,10 +211,11 @@ public class CalendarHelper {
             case 0:
                 // no matching event, don't delete
                 Log.i(LOG_TAG, "no event matches delete request");
-                break;
+                throw new IllegalStateException("No event matches criteria");
             default:
                 // multiple matching events, don't delete
                 Log.i(LOG_TAG, "multiple events match delete request, deletion aborted");
+                throw new IllegalStateException("Multiple events match criteria, please refine the criteria");
         }
     }
 
@@ -306,37 +307,47 @@ public class CalendarHelper {
 
     /**
      * Get the next 5 events (sorted by start time) from the phone calendar.
+     * @param organiceOnly whether only events from the app's calendar are returned
      * @return An array of {@link EventData} representing the next 5 events.
      */
-    public EventData[] getNextEvents() {
+    public List<EventData> getNextEvents(boolean organiceOnly) {
         ContentResolver cr = context.getContentResolver();
 
         Uri uri = CalendarContract.Events.CONTENT_URI;
 
-        String selection = "((" + CalendarContract.Events.DTEND + " > ?))";
-        String[] selectionArgs = new String[] { Long.toString(Calendar.getInstance().getTime().getTime()) };
+        String selection = "((" + CalendarContract.Events.DTEND + " > ?)";
+        List<String> selectionArgs = new ArrayList<>();
+        selectionArgs.add(Long.toString(Calendar.getInstance().getTime().getTime()));
+        if (organiceOnly) {
+            selection = selection + " AND (" + CalendarContract.Events.CALENDAR_ID + "= ?)";
+            selectionArgs.add(Long.toString(calendarID));
+        }
+        selection = selection + ")";
 
         // get number of matching events
         Cursor cur = cr.query(
                 uri,
                 EVENT_PROJECTION,
                 selection,
-                selectionArgs,
+                selectionArgs.toArray(new String[0]),
                 CalendarContract.Events.DTSTART + " ASC"
         );
 
         // get the 5 events
         cur.moveToFirst();
 
-        EventData[] eventData = new EventData[5];
+        List<EventData> eventData = new ArrayList<>(5);
 
         for (int i = 0; i < 5; i++) {
+            if (cur.isAfterLast()) {
+                break;
+            }
             String title = cur.getString(PROJECTION_EVENT_TITLE_INDEX);
             Date start = new Date(cur.getLong(PROJECTION_EVENT_DTSTART_INDEX));
             Date end = new Date(cur.getLong(PROJECTION_EVENT_DTEND_INDEX));
             String venue = cur.getString(PROJECTION_EVENT_LOCATION_INDEX);
             String note = cur.getString(PROJECTION_EVENT_DESCRIPTION_INDEX);
-            eventData[i] = new EventData(title, start, end, venue, note);
+            eventData.add(new EventData(title, start, end, venue, note));
             cur.moveToNext();
         }
 

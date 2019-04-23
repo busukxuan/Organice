@@ -53,7 +53,7 @@ public class EventSearchActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // start EventSelectionActivity when search button is pressed
-                SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+                SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
                 String startString = startEditText.getText().toString();
                 String endString = endEditText.getText().toString();

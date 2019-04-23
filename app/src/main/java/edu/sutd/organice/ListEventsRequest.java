@@ -2,6 +2,9 @@ package edu.sutd.organice;
 
 import android.content.SharedPreferences;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * This class represents a request for the app to send a message to the requesting chat,
  * listing all upcoming events created by that chat. This request is parsed from input in the form
@@ -27,10 +30,13 @@ public class ListEventsRequest extends ActionRequest {
      */
     @Override
     public void execute(SharedPreferences preferences, CalendarHelper calendarHelper, TDHelper tdHelper) {
-        EventData[] eventData = calendarHelper.getNextEvents();
-        String[] eventLines = new String[5];
-        for (int i = 0; i < 5; i++) {
-            eventLines[i] = Integer.toString(i+1) + ". " + eventData[i].toTextLine();
+        List<EventData> eventData = calendarHelper.getNextEvents(true);
+        List<String> eventLines = new ArrayList<>(5);
+        for (int i = 0; i < eventData.size(); i++) {
+            eventLines.add(Integer.toString(i+1) + ". " + eventData.get(i).toTextLine());
+        }
+        if (eventLines.isEmpty()) {
+            eventLines.add("No upcoming events in Organice's calendar.");
         }
         tdHelper.sendMessage(chatId, String.join("\n", eventLines));
     }

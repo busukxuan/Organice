@@ -96,10 +96,10 @@ public abstract class ActionRequest {
                     title = data;
                     break;
                 case "Start":
-                    start = new SimpleDateFormat("dd/MM/yyyy").parse(data);
+                    start = new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(data);
                     break;
                 case "End":
-                    end = new SimpleDateFormat("dd/MM/yyyy").parse(data);
+                    end = new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(data);
                     break;
                 case "Venue":
                     venue = data;

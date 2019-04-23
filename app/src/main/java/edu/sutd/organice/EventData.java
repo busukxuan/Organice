@@ -56,7 +56,7 @@ public class EventData {
      * @return a block of event data formatted text (the same format as action request messages) specifying this event
      */
     public String toMessageFormat() {
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/YYYY HH:mm");
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
         List<String> lines = new ArrayList<>(5);
         if (title != null && !title.isEmpty()) {
@@ -71,7 +71,7 @@ public class EventData {
         if (venue != null && !venue.isEmpty()) {
             lines.add("Venue: " + venue);
         }
-        if (note != null && !venue.isEmpty()) {
+        if (note != null && !note.isEmpty()) {
             lines.add("Note: " + note);
         }
 
