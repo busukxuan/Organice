@@ -199,6 +199,7 @@ public class TDHelper {
             case TdApi.AuthorizationStateClosed.CONSTRUCTOR:
                 // database closed
                 Log.i(LOG_TAG, "database closed");
+                client = Client.create(new TDHelper.UpdatesHandler(), null, null);
                 break;
             default:
                 Log.e(LOG_TAG, "unexpected authorization state: " + authorizationState.toString());
