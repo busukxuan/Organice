@@ -31,6 +31,7 @@ public class ActionRequestTest {
     private TdApi.Message makeTextMessage(String s, long chatId) {
         TdApi.Message message = new TdApi.Message();
         message.content = new TdApi.MessageText();
+        message.isOutgoing = true;
         ((TdApi.MessageText) message.content).text = new TdApi.FormattedText();
         ((TdApi.MessageText) message.content).text.text = s;
         message.chatId = chatId;
@@ -54,8 +55,8 @@ public class ActionRequestTest {
                                 "# organice new\n" +
                                 "Title: just some example title\n" +
                                 "Note: this one has no venue!!!\n" +
-                                "Start: 07/01/1997\n" +
-                                "End: 31/12/1999\n" +
+                                "Start: 07/01/1997 00:00\n" +
+                                "End: 31/12/1999 00:00\n" +
                                 "# end organice\n" +
                                 "more sample text here~~~",
                         new NewEventRequest(
@@ -77,8 +78,8 @@ public class ActionRequestTest {
                                 "# organice new\n" +
                                 "Title: test two title\n" +
                                 "Note: no #end statement\n" +
-                                "Start: 07/01/1997\n" +
-                                "End: 31/12/1999\n" +
+                                "Start: 07/01/1997 00:00\n" +
+                                "End: 31/12/1999 00:00\n" +
                                 "# end organice\n",
                         new NewEventRequest(
                                 123,
@@ -98,8 +99,8 @@ public class ActionRequestTest {
                                 "we are using this text for unit testing...\n" +
                                 "# organice new\n" +
                                 "Note: no title\n" +
-                                "Start: 07/01/1997\n" +
-                                "End: 31/12/1999\n" +
+                                "Start: 07/01/1997 00:00\n" +
+                                "End: 31/12/1999 00:00\n" +
                                 "# end organice\n" +
                                 "more sample text here~~~",
                         new NewEventRequest(
@@ -119,8 +120,8 @@ public class ActionRequestTest {
                         "# organice new\n" +
                                 "Title: just some example title\n" +
                                 "Note: purely the creation of new event\n" +
-                                "Start: 07/01/1997\n" +
-                                "End: 31/12/1999\n" +
+                                "Start: 07/01/1997 00:00\n" +
+                                "End: 31/12/1999 00:00\n" +
                                 "# end organice\n",
                         new NewEventRequest(
                                 12345,
@@ -142,8 +143,8 @@ public class ActionRequestTest {
                                 "# organice new\n" +
                                 "Title: just some example title\n" +
                                 "this one has no venue!!!\n" +
-                                "Start: 07/01/1997\n" +
-                                "End: 31/12/1999\n" +
+                                "Start: 07/01/1997 00:00\n" +
+                                "End: 31/12/1999 00:00\n" +
                                 "# end organice\n" +
                                 "more sample text here~~~",
                         new NewEventRequest(
@@ -165,8 +166,8 @@ public class ActionRequestTest {
                                 "# organice new\n" +
                                 "Title: just some example title\n" +
                                 "Extra: this one has no venue!!!\n" +
-                                "Start: 07/01/1997\n" +
-                                "End: 31/12/1999\n" +
+                                "Start: 07/01/1997 00:00\n" +
+                                "End: 31/12/1999 00:00\n" +
                                 "# end organice\n" +
                                 "more sample text here~~~",
                         new NewEventRequest(
@@ -188,8 +189,8 @@ public class ActionRequestTest {
                                 "# organice new\n" +
                                 "Title: just some example title\n" +
                                 "Note: this one has no start!!!\n" +
-                                "07/01/1997\n" +
-                                "End: 31/12/1999\n" +
+                                "07/01/1997 00:00\n" +
+                                "End: 31/12/1999 00:00\n" +
                                 "# end organice\n" +
                                 "more sample text here~~~",
                         new NewEventRequest(
@@ -211,8 +212,8 @@ public class ActionRequestTest {
                                 "# organice delete\n" +
                                 "Title: just some example title\n" +
                                 "Note: this one has no venue!!!\n" +
-                                "Start: 07/01/1997\n" +
-                                "End: 31/12/1999\n" +
+                                "Start: 07/01/1997 00:00\n" +
+                                "End: 31/12/1999 00:00\n" +
                                 "# end organice\n" +
                                 "more sample text here~~~",
                         new DeleteEventRequest(
@@ -234,8 +235,8 @@ public class ActionRequestTest {
                                 "we are using this text for unit testing...\n" +
                                 "# organice delete\n" +
                                 "Note: this one has no venue!!!\n" +
-                                "Start: 07/01/1997\n" +
-                                "End: 31/12/1999\n" +
+                                "Start: 07/01/1997 00:00\n" +
+                                "End: 31/12/1999 00:00\n" +
                                 "# end organice\n" +
                                 "more sample text here~~~",
                         new DeleteEventRequest(
@@ -258,8 +259,8 @@ public class ActionRequestTest {
                                 "# organice delete\n" +
                                 "Title: just some example title\n" +
                                 "this one has no venue!!!\n" +
-                                "Start: 07/01/1997\n" +
-                                "End: 31/12/1999\n" +
+                                "Start: 07/01/1997 00:00\n" +
+                                "End: 31/12/1999 00:00\n" +
                                 "# end organice\n" +
                                 "more sample text here~~~",
                         new DeleteEventRequest(
@@ -282,8 +283,8 @@ public class ActionRequestTest {
                                 "# organice delete\n" +
                                 "Title: just some example title\n" +
                                 "Extra: this one has no venue!!!\n" +
-                                "Start: 07/01/1997\n" +
-                                "End: 31/12/1999\n" +
+                                "Start: 07/01/1997 00:00\n" +
+                                "End: 31/12/1999 00:00\n" +
                                 "# end organice\n" +
                                 "more sample text here~~~",
                         new DeleteEventRequest(
@@ -302,8 +303,7 @@ public class ActionRequestTest {
                 new Object[] {
                         12345,
                         "# organice list\n",    //test function list
-                        new ListEventsRequest(
-                                (long) 12345),
+                        new ListEventsRequest((long) 12345),
                         null
                 },
                 new Object[] {
@@ -320,7 +320,7 @@ public class ActionRequestTest {
     public void parseMessage() {
         try {
             ActionRequest request = ActionRequest.parseMessage(message);
-            assertEquals(request, expectedRequest);
+            assertEquals(expectedRequest, request);
             if (expectedException != null) {
                 fail("expected exception " + expectedException.toString());
             }
