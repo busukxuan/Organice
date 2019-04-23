@@ -12,8 +12,7 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/blurred_background">
+        android:layout_height="match_parent">
         <TextView
             android:id="@+id/title_text"
             android:textSize="16sp"
