@@ -5,12 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:gravity="center"
     tools:context=".MainActivity">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/shareEventCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:alpha="0.5"
+        android:layout_marginBottom="4dp"
         android:foreground="?android:attr/selectableItemBackground"
         >
         <LinearLayout
@@ -42,6 +45,8 @@
         android:id="@+id/preferencesCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:alpha="0.5"
+        android:layout_marginBottom="4dp"
         android:foreground="?android:attr/selectableItemBackground"
         >
         <LinearLayout
@@ -73,6 +78,8 @@
         android:id="@+id/logoutCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:alpha="0.5"
+        android:layout_marginBottom="4dp"
         android:foreground="?android:attr/selectableItemBackground"
         >
         <LinearLayout
