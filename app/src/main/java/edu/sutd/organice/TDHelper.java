@@ -78,7 +78,9 @@ public class TDHelper {
             message.what = RESULT_MESSAGE_CODE;
             message.obj = object;
             updateServiceHandler.sendMessage(message);
-            testHandler.sendMessage(message);
+            if (testHandler != null) {
+                testHandler.sendMessage(message);
+            }
         }
     }
 
@@ -96,8 +98,9 @@ public class TDHelper {
                     message.what = UPDATE_MESSAGE_CODE;
                     message.obj = object;
                     updateServiceHandler.sendMessage(message);
-                    testHandler.sendMessage(message);
-
+                    if (testHandler != null) {
+                        testHandler.sendMessage(message);
+                    }
             }
         }
     }
