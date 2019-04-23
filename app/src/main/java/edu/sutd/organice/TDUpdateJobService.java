@@ -14,6 +14,9 @@ import android.util.Log;
 
 import org.drinkless.td.libcore.telegram.TdApi;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 /**
  * A {@link JobService JobService} for keeping the app's process alive when it is not in the
  * foreground, so that new messages can be received as soon as they are available.
@@ -69,9 +72,12 @@ public class TDUpdateJobService extends JobService {
                             try {
                                 ActionRequest.execute(preferences, calendarHelper, tdHelper, updateNewMessage.message);
                             } catch (Exception e) {
+                                StringWriter sw = new StringWriter();
+                                e.printStackTrace(new PrintWriter(sw));
                                 tdHelper.sendMessage(
                                         updateNewMessage.message.chatId,
                                         "Organice error - " + e.getMessage());
+                                Log.d(LOG_TAG, sw.toString());
                             }
                         }
                     }
