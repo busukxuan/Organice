@@ -308,7 +308,7 @@ public class CalendarHelper {
     /**
      * Get the next 5 events (sorted by start time) from the phone calendar.
      * @param organiceOnly whether only events from the app's calendar are returned
-     * @return An array of {@link EventData} representing the next 5 events.
+     * @return An list of {@link EventData} representing the next 5 events.
      */
     public List<EventData> getNextEvents(boolean organiceOnly) {
         ContentResolver cr = context.getContentResolver();
