@@ -30,6 +30,7 @@ public class TDHelper {
     private final Context context;
     private Handler updateServiceHandler;
     private Handler activityHandler;
+    public volatile Handler testHandler;
     private Client client;
     private final Client.ResultHandler defaultHandler = new TDHelper.DefaultHandler();
     // authorization variables
@@ -77,6 +78,7 @@ public class TDHelper {
             message.what = RESULT_MESSAGE_CODE;
             message.obj = object;
             updateServiceHandler.sendMessage(message);
+            testHandler.sendMessage(message);
         }
     }
 
@@ -94,6 +96,7 @@ public class TDHelper {
                     message.what = UPDATE_MESSAGE_CODE;
                     message.obj = object;
                     updateServiceHandler.sendMessage(message);
+                    testHandler.sendMessage(message);
 
             }
         }
