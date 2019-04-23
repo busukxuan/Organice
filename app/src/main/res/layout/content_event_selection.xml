@@ -4,12 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/blurred_background"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".EventSelectionActivity"
     tools:showIn="@layout/activity_event_selection">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/event_data_recycler_view"
+        android:alpha="0.5"
         android:scrollbars="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"></androidx.recyclerview.widget.RecyclerView>
