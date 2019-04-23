@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@drawable/blurred_background"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".EventSelectionActivity"
@@ -11,10 +11,9 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/event_data_recycler_view"
-        android:alpha="0.5"
         android:scrollbars="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"></androidx.recyclerview.widget.RecyclerView>
 
 
-</LinearLayout>
+</>
