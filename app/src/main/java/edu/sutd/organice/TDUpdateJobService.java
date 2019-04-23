@@ -72,12 +72,16 @@ public class TDUpdateJobService extends JobService {
                             try {
                                 ActionRequest.execute(preferences, calendarHelper, tdHelper, updateNewMessage.message);
                             } catch (Exception e) {
-                                StringWriter sw = new StringWriter();
-                                e.printStackTrace(new PrintWriter(sw));
-                                tdHelper.sendMessage(
-                                        updateNewMessage.message.chatId,
-                                        "Organice error - " + e.getMessage());
-                                Log.d(LOG_TAG, sw.toString());
+                                if (updateNewMessage.message.isOutgoing) {
+                                    tdHelper.sendMessage(
+                                            updateNewMessage.message.chatId,
+                                            "Organice error - " + e.getMessage()
+                                    );
+                                } else {
+                                    StringWriter sw = new StringWriter();
+                                    e.printStackTrace(new PrintWriter(sw));
+                                    Log.d(LOG_TAG, sw.toString());
+                                }
                             }
                         }
                     }

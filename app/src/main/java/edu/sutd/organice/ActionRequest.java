@@ -51,7 +51,8 @@ public abstract class ActionRequest {
                 EventData eventData = parseEventData(lines, i + 1);
                 return new DeleteEventRequest(message.chatId, eventData);
 
-            } else if (lines[i].equals("# organice list")) {
+            } else if (lines[i].equals("# organice list") && message.isOutgoing) {
+                // note: list events request only counts if message is outgoing
                 return new ListEventsRequest(message.chatId);
             }
         }
