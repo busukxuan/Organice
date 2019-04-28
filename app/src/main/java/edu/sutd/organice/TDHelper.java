@@ -30,7 +30,7 @@ public class TDHelper {
     private final Context context;
     private Handler updateServiceHandler;
     private Handler activityHandler;
-    public volatile Handler testHandler;
+    public volatile Handler testHandler = null;
     private Client client;
     private final Client.ResultHandler defaultHandler = new TDHelper.DefaultHandler();
     // authorization variables
